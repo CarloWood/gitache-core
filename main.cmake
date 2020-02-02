@@ -1,1 +1,1 @@
-message(STATUS "We are here: ${CMAKE_CURRENT_LIST_FILE}")
+message(STATUS "We are here: ${CMAKE_CURRENT_LIST_FILE}; GITACHE_CORE_SHA1 = ${GITACHE_CORE_SHA1}")
