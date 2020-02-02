@@ -27,7 +27,11 @@ set(GITACHE_CORE_SHA1 ${head_sha1})
   )
 #    OUTPUT_QUIET
 #    ERROR_QUIET
-  message(STATUS "_result_error = \"${_result_error}\".")
+  if (_result_error EQUAL "0")
+    message(STATUS "SUCCESS: _result_error = \"${_result_error}\".")
+  else ()
+    message(STATUS "ERROR: _result_error = \"${_result_error}\".")
+  endif ()
 else ()
   message(STATUS "Already equal!")
 endif ()
