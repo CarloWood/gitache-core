@@ -14,6 +14,9 @@ execute_process(COMMAND git rev-parse HEAD
   OUTPUT_VARIABLE head_sha1
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+set(GITACHE_CORE_SHA1 ${head_sha1})
 if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
   message(STATUS "head_sha1 = \"${head_sha1}\", GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\".")
+else ()
+  message(STATUS "Already equal!")
 endif ()
