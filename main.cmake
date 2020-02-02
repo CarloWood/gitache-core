@@ -2,8 +2,8 @@
 # This is done by executing git commands directly, so find git.
 
 set(GITACHE_CORE_SOURCE_DIR "${GITACHE_CORE_DIR}/source")
-list(APPEND CMAKE_PREFIX_PATH "${GITACHE_CORE_SOURCE_DIR}/hutils")
-message(STATUS "CMAKE_PREFIX_PATH = \"${CMAKE_PREFIX_PATH}\".")
+list(APPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/hutils")
+message(STATUS "CMAKE_MODULE_PATH = \"${CMAKE_MODULE_PATH}\".")
 include(gitache_get_git_executable)
 
 gitache_get_git_executable(git_executable)
