@@ -17,7 +17,7 @@ execute_process(COMMAND ${git_executable} rev-parse HEAD
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
-  set(GITACHE_CORE_SHA1 "abcdef")
+  set(GITACHE_CORE_SHA1 "${head_sha1}")
   # If the right SHA1 is not already checked out,
   message(DEBUG "head_sha1 = \"${head_sha1}\", GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\".")
   # check if the SHA1 is in the local repository.
