@@ -12,5 +12,6 @@ message(DEBUG "git_executable = \"${git_executable}\".")
 execute_process(COMMAND git rev-parse HEAD
   WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
   OUTPUT_VARIABLE head_sha1
+  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 message(STATUS "head_sha1 = \"${head_sha1}\".")
