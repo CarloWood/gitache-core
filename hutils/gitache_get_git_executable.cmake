@@ -4,6 +4,7 @@
 include(gitache_assert_empty_string)
 include(gitache_assert_not_empty_string)
 include(gitache_internal_error)
+include(gitache_status_debug)
 
 function(gitache_get_git_executable git_executable_varname)
   gitache_assert_not_empty_string("${git_executable_varname}")
