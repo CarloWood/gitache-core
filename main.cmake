@@ -23,10 +23,9 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
   # check if the SHA1 is in the local repository.
   execute_process(COMMAND ${git_executable} cat-file -e "${GITACHE_CORE_SHA1}^{commit}"
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
+    ERROR_QUIET
     RESULT_VARIABLE _result_error
   )
-#    OUTPUT_QUIET
-#    ERROR_QUIET
   if (_result_error EQUAL "0")
     message(STATUS "SUCCESS: _result_error = \"${_result_error}\".")
   else ()
