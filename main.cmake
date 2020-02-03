@@ -43,7 +43,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
     )
   endif ()
   message(STATUS "Setting GITACHE_CORE_RELOADED to TRUE")
-  set(GITACHE_CORE_RELOADED TRUE PARENT_SCOPE)
+  set(GITACHE_CORE_RELOADED TRUE CACHE INTERNAL "")
   # Now checkout the needed SHA1.
   execute_process(COMMAND ${git_executable} checkout ${GITACHE_CORE_SHA1}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
