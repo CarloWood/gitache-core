@@ -43,7 +43,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
     )
   endif ()
   #  message(STATUS "Setting GITACHE_CORE_RELOADED to TRUE")
-  set(GITACHE_CORE_RELOADED TRUE CACHE INTERNAL "" FORCE)
+  set(GITACHE_CORE_RELOADED TRUE CACHE INTERNAL "")
   # Now checkout the needed SHA1.
   #message(STATUS "Before: GITACHE_CORE_RELOADED = \"${GITACHE_CORE_RELOADED}\".")
   execute_process(COMMAND ${git_executable} checkout ${GITACHE_CORE_SHA1}
@@ -57,11 +57,11 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
   endif ()
   #message(STATUS "After: GITACHE_CORE_RELOADED = \"${GITACHE_CORE_RELOADED}\".")
   # Reload this file.
-  message(STATUS "Doing return()")
+  #message(STATUS "Doing return()")
   file(LOCK ${GITACHE_CORE_SOURCE_DIR} DIRECTORY RELEASE)
   return()
 else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
 endif ()
 
-message(STATUS "THIS IS THE VERSION 9!")
+message(STATUS "THIS IS THE VERSION 10!")
