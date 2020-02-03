@@ -48,7 +48,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
     OUTPUT_QUIET
-    #ERROR_QUIET
+    ERROR_QUIET
   )
   if (_result_error)
     message(FATAL_ERROR "Failed to checkout ${GITACHE_CORE_SHA1} of gitache-core!")
