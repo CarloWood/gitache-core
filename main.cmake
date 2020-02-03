@@ -42,8 +42,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     )
   endif ()
-  #set(GITACHE_NEED_INCLUDE TRUE CACHE INTERNAL "")
-  set(GITACHE_NEED_INCLUDE TRUE)
+  set(gitache_need_include TRUE)
   # Now checkout the needed SHA1.
   execute_process(COMMAND ${git_executable} checkout ${GITACHE_CORE_SHA1}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
