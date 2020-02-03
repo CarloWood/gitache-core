@@ -58,6 +58,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
   #]]
   # Reload this file.
   message(STATUS "Doing return()")
+  file(LOCK ${GITACHE_CORE_SOURCE_DIR} DIRECTORY RELEASE)
   return()
 else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
