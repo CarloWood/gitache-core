@@ -61,4 +61,4 @@ else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
 endif ()
 
-message(STATUS "2. THIS IS THE LATEST VERSIONS!")
+message(STATUS "THIS IS THE VERSION 3!")
