@@ -55,3 +55,5 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
 else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
 endif ()
+
+message(STATUS "1. THIS IS THE LATEST VERSIONS!")
