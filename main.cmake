@@ -29,7 +29,6 @@ execute_process(COMMAND ${git_executable} rev-parse HEAD
 )
 # If the right SHA1 is not already checked out,
 if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
-  set(GITACHE_CORE_SHA1 "${head_sha1}")
   message(DEBUG "head_sha1 = \"${head_sha1}\", GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\".")
   # check if the SHA1 is in the local repository.
   execute_process(COMMAND ${git_executable} cat-file -e "${GITACHE_CORE_SHA1}^{commit}"
