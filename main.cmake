@@ -52,8 +52,11 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
   if (_result_error)
     message(FATAL_ERROR "Failed to checkout ${GITACHE_CORE_SHA1} of gitache-core!")
   endif ()
+  set(GITACHE_CORE_RELOADED TRUE PARENT_SCOPE)
+  # Reload this file.
+  return()
 else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
 endif ()
 
-message(STATUS "1. THIS IS THE LATEST VERSIONS!")
+message(STATUS "2. THIS IS THE LATEST VERSIONS!")
