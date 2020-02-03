@@ -61,5 +61,4 @@ else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
 endif ()
 
-
 set(GITACHE_CORE_PARANOID_CHECK ${head_sha1})
