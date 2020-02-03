@@ -42,6 +42,8 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     )
   endif ()
+  message(STATUS "Setting GITACHE_CORE_RELOADED to TRUE")
+  set(GITACHE_CORE_RELOADED TRUE PARENT_SCOPE)
   # Now checkout the needed SHA1.
   execute_process(COMMAND ${git_executable} checkout ${GITACHE_CORE_SHA1}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
@@ -52,8 +54,6 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
   if (_result_error)
     message(FATAL_ERROR "Failed to checkout ${GITACHE_CORE_SHA1} of gitache-core!")
   endif ()
-  message(STATUS "Setting GITACHE_CORE_RELOADED to TRUE")
-  set(GITACHE_CORE_RELOADED TRUE PARENT_SCOPE)
   # Reload this file.
   message(STATUS "Doing return()")
   return()
@@ -61,4 +61,4 @@ else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
 endif ()
 
-message(STATUS "THIS IS THE VERSION 3!")
+message(STATUS "THIS IS THE VERSION 4!")
