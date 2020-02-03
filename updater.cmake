@@ -56,7 +56,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
   endif ()
   # This file was changed. Reload it!
   file(LOCK ${GITACHE_CORE_SOURCE_DIR} DIRECTORY RELEASE)
-  message(STATUS "After execute_process: gitache_need_include = ${gitache_need_include}.")
+  message(STATUS "1. After execute_process: gitache_need_include = ${gitache_need_include}.")
   return()
 else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
