@@ -3,7 +3,7 @@
 
 # This is the gitache-core git repository.
 set(GITACHE_CORE_SOURCE_DIR "${GITACHE_CORE_DIR}/source")
-list(APPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/hutils")
+list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/hutils")
 include(gitache_get_git_executable)
 gitache_get_git_executable(git_executable)
 message(DEBUG "git_executable = \"${git_executable}\".")
@@ -60,4 +60,11 @@ else ()
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
 endif ()
 
+# Once we get here, set GITACHE_CORE_PARANOID_CHECK to the actual value of HEAD,
+# so that the CMakeLists.txt that included us can check that everything really
+# worked.
 set(GITACHE_CORE_PARANOID_CHECK ${head_sha1})
+
+# Now, with ${GITACHE_CORE_SOURCE_DIR} process locked, start the real thing.
+list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}")
+include(main)
