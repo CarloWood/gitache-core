@@ -54,6 +54,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
     message(FATAL_ERROR "Failed to checkout ${GITACHE_CORE_SHA1} of gitache-core!")
   endif ()
   # This file was changed. Reload it!
+  message(STATUS "Unlocking \"${GITACHE_CORE_SOURCE_DIR}\"...")
   file(LOCK ${GITACHE_CORE_SOURCE_DIR} DIRECTORY RELEASE)
   return()
 else ()
