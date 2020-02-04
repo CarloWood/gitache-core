@@ -1,1 +1,1 @@
-message(STATUS "We get here!")
+message(STATUS "GITACHE_PACKAGES = \"${GITACHE_PACKAGES}\".")
