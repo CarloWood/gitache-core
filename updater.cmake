@@ -3,7 +3,7 @@
 
 # This is the gitache-core git repository.
 set(GITACHE_CORE_SOURCE_DIR "${GITACHE_CORE_DIR}/source")
-list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/hutils")
+list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
 include(gitache_get_git_executable)
 gitache_get_git_executable(git_executable)
 message(DEBUG "git_executable = \"${git_executable}\".")
