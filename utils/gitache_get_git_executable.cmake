@@ -1,5 +1,5 @@
 function(gitache_get_git_executable git_executable_varname)
-  if (ENV{GITACHE_GIT_EXECUTABLE} STREQUAL "")
+  if (NOT DEFINED ENV{GITACHE_GIT_EXECUTABLE})
     find_package(Git REQUIRED)
     set(git_executable ${GIT_EXECUTABLE})
     set(git_version ${GIT_VERSION_STRING})
@@ -28,8 +28,11 @@ function(gitache_get_git_executable git_executable_varname)
     message(FATAL_ERROR "Failed to determine version of git.")
   endif ()
 
-  if (git_version VERSION_LESS "2.5.0")
-    message(FATAL_ERROR "Git version 2.5.0 or higher is required.")
+  # 2.13 is the first version that moved to a hardened SHA-1 implementation
+  # by default, which isn’t vulnerable to the SHAttered attack.
+  # See https://git-scm.com/docs/hash-function-transition/
+  if (git_version VERSION_LESS "2.13.0")
+    message(FATAL_ERROR "Git version 2.13.0 or higher is required.")
   endif ()
 
   set(${git_executable_varname} ${git_executable} PARENT_SCOPE)

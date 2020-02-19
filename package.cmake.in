@@ -1,0 +1,16 @@
+ExternalProject_Add(
+  gitache_package_@gitache_package@
+  PREFIX @gitache_package_PREFIX@
+  INSTALL_DIR @gitache_package_INSTALL_DIR@
+  CMAKE_ARGS @gitache_package_CMAKE_ARGS@
+  @external_project_arguments@
+)
+
+ExternalProject_Add_Step(
+  gitache_package_@gitache_package@ lock
+  COMMAND @gitache_package_lock_COMMAND@
+  COMMENT "Locking '@gitache_package_PREFIX@' for 'gitache_package_@gitache_package@'"
+  DEPENDERS mkdir
+  ALWAYS 1
+  WORKING_DIRECTORY "@gitache_package_PREFIX@"
+)
