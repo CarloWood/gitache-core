@@ -1,13 +1,15 @@
 #! /bin/bash
+# Copyright (c) 2020  Carlo Wood.
+#
+# Unlock directory $1 after locking it with lock.sh.
+# $2 must be the same unique string as was used while
+# locking, although merely as sanity check.
 
 function fatal_error()
 {
   echo "$0: FATAL_ERROR: $1" >&2
   exit 1
 }
-
-# Unlock directory $1.
-# <unique_key> is usually a PID.
 
 if [ $# -ne 2 -o ! -d "$1" ]; then
   echo "Usage: $0 <directory> <unique_key>" >&2

@@ -1,13 +1,25 @@
 #! /bin/bash
+# Copyright (c) 2020  Carlo Wood.
+#
+# Lock directory $1 by first acquiring an flock(1) on
+# $1/gitache.flock and while holding that writing $2
+# to the file $1/gitache.lock.
+#
+# The directory is considered locked once the flock
+# is obtained or (afterwards) when gitache.lock exists.
+
+# $2 should be an unique but descriptive string.
+# If a lock cannot be obtained because gitache.lock
+# already exists, its content (the unique string)
+# is printed to help the user understand what project
+# and/or process is holding the lock, and removing the
+# lock file if it turns out to be a stale one.
 
 function fatal_error()
 {
   echo "$0: FATAL_ERROR: $1" >&2
   exit 1
 }
-
-# Lock fd $2.
-# <unique_key> is usually a PID.
 
 if [ $# -ne 2 -o ! -d "$1" ]; then
   echo "Usage: $0 <directory> <unique_key>" >&2
