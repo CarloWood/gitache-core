@@ -26,10 +26,15 @@
 
 # This is the gitache-core git repository.
 set(GITACHE_CORE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
+
+# Add utils subdirectory to CMAKE_MODULE_PATH.
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
+
+# Include utility modules and find git executable.
 include(gitache_get_git_executable)
+include(debug_support)
 gitache_get_git_executable(git_executable)
-message(DEBUG "git_executable = \"${git_executable}\".")
+Dout("git_executable = \"${git_executable}\".")
 
 # Stop other processes from changing the SHA1.
 lock_core_directory()
@@ -42,7 +47,7 @@ execute_process(COMMAND ${git_executable} rev-parse HEAD
 )
 # If the right SHA1 is not already checked out,
 if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
-  message(DEBUG "head_sha1 = \"${head_sha1}\", GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\".")
+  Dout("head_sha1 = \"${head_sha1}\", GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\".")
   if (gitache_core_is_local)
     if (GITACHE_CORE_SHA1 STREQUAL "")
       set(_fatal_message "Local ${PROJECT_NAME} detected.")
@@ -59,7 +64,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
     RESULT_VARIABLE _result_error
     ERROR_QUIET
   )
-  if (NOT _result_error EQUAL "0")
+  if (NOT _result_error EQUAL 0)
     # That SHA1 is not known yet. Fetch it from upstream.
     execute_process(COMMAND ${git_executable} fetch
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}

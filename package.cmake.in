@@ -14,3 +14,12 @@ ExternalProject_Add_Step(
   ALWAYS 1
   WORKING_DIRECTORY "@gitache_package_PREFIX@"
 )
+
+ExternalProject_Add_Step(
+  gitache_package_@gitache_package@ unlock
+  COMMAND @gitache_package_unlock_COMMAND@
+  COMMENT "Unlocking '@gitache_package_PREFIX@' for 'gitache_package_@gitache_package@'"
+  DEPENDEES install
+  ALWAYS 1
+  WORKING_DIRECTORY "@gitache_package_PREFIX@"
+)
