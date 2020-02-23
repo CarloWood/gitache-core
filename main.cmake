@@ -1,5 +1,5 @@
 # Every package in GITACHE_PACKAGES must have a config file.
-set(GITACHE_CONFIGS_DIR "${CMAKE_SOURCE_DIR}/gitache/configs")
+set(GITACHE_CONFIGS_DIR "${CMAKE_SOURCE_DIR}/cmake/gitache-configs" CACHE PATH "Directory containing configs for gitache packages.")
 message(STATUS "Reading package configurations from \"${GITACHE_CONFIGS_DIR}/\"...")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cwm4/cmake")
@@ -70,5 +70,11 @@ foreach (gitache_package ${GITACHE_PACKAGES})
   Dout("Processing generated configuration file \"${_output_file}\".")
   include("${_output_file}")
   unlock_directory(${_package_root})
+
+  # The find_package will be done in the parent scope.
+  set(${gitache_package}_ROOT "${_package_install_dir}" PARENT_SCOPE)
+  # Also set this variable in the current scope, so that subsequent packages can find packages we already configured.
+  set(${gitache_package}_ROOT "${_package_install_dir}")
+  Dout("${gitache_package}: ${gitache_package}_ROOT = \"${_package_install_dir}\".")
 
 endforeach ()

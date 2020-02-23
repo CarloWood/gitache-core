@@ -9,7 +9,7 @@ but add the following immediately after the `include(FetchContent)` line:
     if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/gitache/.git)  
       # This will disable the use of the GIT_REPOSITORY/GIT_TAG below, and disable the  
       # FetchContent- download and update step. Instead, use the gitache submodule as-is.  
-      set(FETCHCONTENT_SOURCE_DIR_GITACHE "gitache" CACHE INTERNAL "" FORCE)  
+      set(FETCHCONTENT_SOURCE_DIR_GITACHE "${CMAKE_CURRENT_LIST_DIR}/gitache" CACHE INTERNAL "" FORCE)
     endif ()
 
 This more verbose version allows you to clone gitache in the root
