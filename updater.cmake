@@ -29,6 +29,7 @@ set(GITACHE_CORE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # Add utils subdirectory to CMAKE_MODULE_PATH.
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
+message(STATUS "CMAKE_MODULE_PATH = \"${CMAKE_MODULE_PATH}\".")
 
 # Include utility modules and find git executable.
 include(gitache_get_git_executable)
