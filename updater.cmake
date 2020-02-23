@@ -25,7 +25,7 @@
 # This is done by executing git commands directly; so find git.
 
 # This is the gitache-core git repository.
-set(GITACHE_CORE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
+#set(GITACHE_CORE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # Add utils subdirectory to CMAKE_MODULE_PATH.
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
