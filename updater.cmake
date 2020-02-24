@@ -24,12 +24,8 @@
 # Make sure that GITACHE_CORE_SHA1 is checked out.
 # This is done by executing git commands directly; so find git.
 
-# This is the gitache-core git repository.
-#set(GITACHE_CORE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
-
 # Add utils subdirectory to CMAKE_MODULE_PATH.
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
-message(STATUS "CMAKE_MODULE_PATH = \"${CMAKE_MODULE_PATH}\".")
 
 # Include utility modules and find git executable.
 include(gitache_get_git_executable)
