@@ -1,3 +1,10 @@
+## Gitache package configuration files.
+
+To be done...
+
+See https://github.com/CarloWood/ai-statefultask-testsuite/tree/master/cmake/gitache-configs
+for example configurations.
+
 ## Gitache developers
 
 If you want to experiment with making changes to gitache itself,
