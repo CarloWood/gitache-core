@@ -18,7 +18,7 @@ set(gitache_package_lock_id "${CMAKE_SOURCE_DIR} - configured ${_current_time} -
 
 function(lock_directory package_root)
   execute_process(
-    COMMAND "${GITACHE_CORE_SOURCE_DIR}/lock.sh" "${package_root}" "${gitache_package_lock_id}"
+    COMMAND "${GITACHE_CORE_SOURCE_DIR}/lock.sh" ${package_root} ${gitache_package_lock_id}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _exit_code
   )
@@ -29,7 +29,7 @@ endfunction()
 
 function(unlock_directory package_root)
   execute_process(
-    COMMAND "${GITACHE_CORE_SOURCE_DIR}/unlock.sh" "${package_root}" "${gitache_package_lock_id}"
+    COMMAND "${GITACHE_CORE_SOURCE_DIR}/unlock.sh" ${package_root} ${gitache_package_lock_id}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _exit_code
   )
@@ -66,6 +66,7 @@ foreach (gitache_package ${GITACHE_PACKAGES})
   set(gitache_package_lock_COMMAND "${GITACHE_CORE_SOURCE_DIR}/lock.sh ${_package_root} \"${gitache_package_lock_id}\"")
   set(gitache_package_unlock_COMMAND "${GITACHE_CORE_SOURCE_DIR}/unlock.sh ${_package_root} \"${gitache_package_lock_id}\"")
   configure_file("${CMAKE_CURRENT_LIST_DIR}/package.cmake.in" ${_output_file} @ONLY)
+  file(MAKE_DIRECTORY ${_package_root})
   lock_directory(${_package_root})
   Dout("Processing generated configuration file \"${_output_file}\".")
   include("${_output_file}")
