@@ -3,7 +3,29 @@ ExternalProject_Add(
   PREFIX @gitache_package_PREFIX@
   INSTALL_DIR @gitache_package_INSTALL_DIR@
   CMAKE_ARGS @gitache_package_CMAKE_ARGS@
+  # The update command must touch both, @gitache_package_PREFIX@/gitache_package_@gitache_package@-update and
+  # @gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-update
+  # whenever there is a chance that a recompile is needed.
+  UPDATE_COMMAND @gitache_package_UPDATE_COMMAND@
   @external_project_arguments@
+)
+
+# The above function call deleted the update time stamp file, copy it back.
+if (EXISTS @gitache_package_PREFIX@/gitache_package_@gitache_package@-update)
+  file(COPY @gitache_package_PREFIX@/gitache_package_@gitache_package@-update
+    DESTINATION @gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp)
+endif ()
+
+# This is just a step that always runs, with as depender 'update' in
+# order to have the 'update' step also always run. It is the update
+# step (see UPDATE_COMMAND above) that will check if the source changed
+# and touch the time stamp of the update stamp file if so.
+ExternalProject_Add_Step(
+  gitache_package_@gitache_package@ always_run
+  COMMENT "Checking for source change of package 'gitache_package_@gitache_package@'"
+  DEPENDERS update
+  EXCLUDE_FROM_MAIN 1
+  ALWAYS 1
 )
 
 ExternalProject_Add_Step(
