@@ -6,15 +6,21 @@ ExternalProject_Add(
   # The update command must touch both, @gitache_package_PREFIX@/gitache_package_@gitache_package@-update and
   # @gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-update
   # whenever there is a chance that a recompile is needed.
-  UPDATE_COMMAND @gitache_package_UPDATE_COMMAND@
+  @gitache_package_UPDATE_COMMAND@
+  UPDATE_DISCONNECTED 1
   @external_project_arguments@
 )
 
 # The above function call deleted the update time stamp file, copy it back.
-if (EXISTS @gitache_package_PREFIX@/gitache_package_@gitache_package@-update)
-  file(COPY @gitache_package_PREFIX@/gitache_package_@gitache_package@-update
-    DESTINATION @gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp)
+if (EXISTS "@gitache_package_PREFIX@/gitache_package_@gitache_package@-update")
+  file(COPY "@gitache_package_PREFIX@/gitache_package_@gitache_package@-update"
+    DESTINATION "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp")
 endif ()
+
+ExternalProject_Add_StepTargets(
+  gitache_package_@gitache_package@
+  update
+)
 
 # This is just a step that always runs, with as depender 'update' in
 # order to have the 'update' step also always run. It is the update
@@ -22,26 +28,54 @@ endif ()
 # and touch the time stamp of the update stamp file if so.
 ExternalProject_Add_Step(
   gitache_package_@gitache_package@ always_run
-  COMMENT "Checking for source change of package 'gitache_package_@gitache_package@'"
+  USES_TERMINAL OFF
   DEPENDERS update
   EXCLUDE_FROM_MAIN 1
+  EXCLUDE_FROM_ALL 1
   ALWAYS 1
 )
 
-ExternalProject_Add_Step(
-  gitache_package_@gitache_package@ lock
+# File lock support.
+add_custom_command(
+  COMMENT "Locking directory '@gitache_package_PREFIX@' for 'gitache_package_@gitache_package@'"
+  OUTPUT "@gitache_package_PREFIX@/gitache-lock"
+  BYPRODUCTS "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock"
   COMMAND @gitache_package_lock_COMMAND@
-  COMMENT "Locking '@gitache_package_PREFIX@' for 'gitache_package_@gitache_package@'"
-  DEPENDERS mkdir
-  ALWAYS 1
-  WORKING_DIRECTORY "@gitache_package_PREFIX@"
 )
+
+ExternalProject_Add_Step(
+  gitache_package_@gitache_package@ lock_mkdir
+  COMMENT "Link step between lock and mkdir"
+  DEPENDERS mkdir
+  DEPENDS "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock"
+)
+
+#[[
+# The above function call deleted the lock time stamp file, copy it back.
+if (EXISTS                                                           "@gitache_package_PREFIX@/gitache_package_@gitache_package@-lock")
+  file(COPY                                                          "@gitache_package_PREFIX@/gitache_package_@gitache_package@-lock"
+    DESTINATION          "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp")
+  message(STATUS "CREATED @gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock")
+else ()
+  # Make sure the lock stamp exists.
+  file(TOUCH             "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock")
+  message(STATUS "CREATED @gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock")
+  file(COPY              "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock"
+    DESTINATION                                                      "@gitache_package_PREFIX@")
+endif ()
+if (EXISTS "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock")
+  message(STATUS "It now exists.")
+endif ()
+#]]
 
 ExternalProject_Add_Step(
   gitache_package_@gitache_package@ unlock
   COMMAND @gitache_package_unlock_COMMAND@
-  COMMENT "Unlocking '@gitache_package_PREFIX@' for 'gitache_package_@gitache_package@'"
+  COMMENT "Unlocking directory '@gitache_package_PREFIX@' for 'gitache_package_@gitache_package@'"
   DEPENDEES install
-  ALWAYS 1
+  DEPENDS "@gitache_package_PREFIX@/gitache-lock"
   WORKING_DIRECTORY "@gitache_package_PREFIX@"
 )
+
+# Make sure the unlock stamp file exists.
+file(TOUCH "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-unlock")

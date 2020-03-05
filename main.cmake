@@ -61,19 +61,18 @@ foreach (gitache_package ${GITACHE_PACKAGES})
   set(_package_root "${GITACHE_ROOT}/${gitache_package}")
   set(_package_install_dir "${_package_root}/${${gitache_package}_config_hash}")
   set(_update_stamp_file "${_package_root}/src/gitache_package_${gitache_package}-stamp/gitache_package_${gitache_package}-update")
+  set(_lock_stamp_file "${_package_root}/src/gitache_package_${gitache_package}-stamp/gitache_package_${gitache_package}-lock")
 
   set(gitache_package_PREFIX "${_package_root}")
   set(gitache_package_INSTALL_DIR "${_package_install_dir}")
   set(gitache_package_CMAKE_ARGS "${cmake_arguments} -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>")
-  set(gitache_package_lock_COMMAND "${GITACHE_CORE_SOURCE_DIR}/lock.sh ${_package_root} \"${gitache_package_lock_id}\"")
-  set(gitache_package_unlock_COMMAND "${GITACHE_CORE_SOURCE_DIR}/unlock.sh ${_package_root} \"${gitache_package_lock_id}\"")
   set(gitache_package_UPDATE_COMMAND)
   message(STATUS "CMAKE_MESSAGE_LOG_LEVEL = \"${CMAKE_MESSAGE_LOG_LEVEL}\".")
+  set(_log_level)
+  if (DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
+    set(_log_level "--log-level=${CMAKE_MESSAGE_LOG_LEVEL} ")
+  endif ()
   if (GIT_TAG)
-    set(_log_level)
-    if (DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
-      set(_log_level "--log-level=${CMAKE_MESSAGE_LOG_LEVEL} ")
-    endif ()
     string(CONCAT gitache_package_UPDATE_COMMAND
         "UPDATE_COMMAND ${CMAKE_COMMAND} "
             "${_log_level}"
@@ -84,6 +83,16 @@ foreach (gitache_package ${GITACHE_PACKAGES})
             "-DSTAMP_FILE='${_update_stamp_file}' "
             "-P ${GITACHE_CORE_SOURCE_DIR}/package-gitupdate.cmake")
   endif ()
+  set(gitache_package_lock_COMMAND)
+  string(CONCAT gitache_package_lock_COMMAND
+      "${CMAKE_COMMAND} "
+      "${_log_level}"
+      "-DLOCK_SCRIPT='${GITACHE_CORE_SOURCE_DIR}/lock.sh' "
+      "-DPACKAGE_ROOT='${_package_root}' "
+      "-DLOCK_ID='${gitache_package_lock_id}' "
+      "-DSTAMP_FILE='${_lock_stamp_file}' "
+      "-P ${GITACHE_CORE_SOURCE_DIR}/package-lock.cmake")
+  set(gitache_package_unlock_COMMAND "${GITACHE_CORE_SOURCE_DIR}/unlock.sh ${_package_root} \"${gitache_package_lock_id}\"")
   configure_file("${CMAKE_CURRENT_LIST_DIR}/package.cmake.in" ${_output_file} @ONLY)
   file(MAKE_DIRECTORY ${_package_root})
   lock_directory(${_package_root})
