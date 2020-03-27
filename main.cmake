@@ -6,6 +6,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cwm4/cmake")
 
 include(gitache_config)
 include(ExternalProject)
+include(gitache_create_step)
 
 # Create necessary directories.
 set(_package_directory "${CMAKE_CURRENT_BINARY_DIR}/packages")
@@ -60,29 +61,27 @@ foreach (gitache_package ${GITACHE_PACKAGES})
 
   set(_package_root "${GITACHE_ROOT}/${gitache_package}")
   set(_package_install_dir "${_package_root}/${${gitache_package}_config_hash}")
-  set(_update_stamp_file "${_package_root}/src/gitache_package_${gitache_package}-stamp/gitache_package_${gitache_package}-update")
+  set(_gitupdate_stamp_file "${_package_root}/src/gitache_package_${gitache_package}-stamp/gitache_package_${gitache_package}-gitupdate")
   set(_lock_stamp_file "${_package_root}/src/gitache_package_${gitache_package}-stamp/gitache_package_${gitache_package}-lock")
 
   set(gitache_package_PREFIX "${_package_root}")
   set(gitache_package_INSTALL_DIR "${_package_install_dir}")
   set(gitache_package_CMAKE_ARGS "${cmake_arguments} -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>")
-  set(gitache_package_UPDATE_COMMAND)
+  set(gitache_package_update_COMMAND)
   message(STATUS "CMAKE_MESSAGE_LOG_LEVEL = \"${CMAKE_MESSAGE_LOG_LEVEL}\".")
   set(_log_level)
   if (DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
     set(_log_level "--log-level=${CMAKE_MESSAGE_LOG_LEVEL} ")
   endif ()
-  if (GIT_TAG)
-    string(CONCAT gitache_package_UPDATE_COMMAND
-        "UPDATE_COMMAND ${CMAKE_COMMAND} "
-            "${_log_level}"
-            "-DGIT_EXE='${git_executable}' "
-            "-DGIT_TAG=${GIT_TAG} "
-            "-DPACKAGE_ROOT='${_package_root}' "
-            "-DPACKAGE_NAME=${gitache_package} "
-            "-DSTAMP_FILE='${_update_stamp_file}' "
-            "-P ${GITACHE_CORE_SOURCE_DIR}/package-gitupdate.cmake")
-  endif ()
+  string(CONCAT gitache_package_update_COMMAND
+      "${CMAKE_COMMAND} "
+          "${_log_level}"
+          "-DGIT_EXE='${git_executable}' "
+          "-DGIT_TAG=${GIT_TAG} "
+          "-DPACKAGE_ROOT='${_package_root}' "
+          "-DPACKAGE_NAME=${gitache_package} "
+          "-DSTAMP_FILE='${_gitupdate_stamp_file}' "
+          "-P ${GITACHE_CORE_SOURCE_DIR}/package-gitupdate.cmake")
   set(gitache_package_lock_COMMAND)
   string(CONCAT gitache_package_lock_COMMAND
       "${CMAKE_COMMAND} "
