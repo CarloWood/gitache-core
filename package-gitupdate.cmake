@@ -6,6 +6,15 @@ STAMP_FILE = \"${STAMP_FILE}\"; \
 PACKAGE_NAME = \"${PACKAGE_NAME}\"; \
 PWD = $ENV{PWD}.")
 
+set(commit_sha1)
+if (GIT_TAG MATCHES
+    "^[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
+[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
+[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
+[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$")
+  set(commit_sha1 ${GIT_TAG})
+endif ()
+
 execute_process(
   COMMAND "${GIT_EXE}" rev-list --max-count=1 HEAD
   RESULT_VARIABLE error_code
@@ -76,8 +85,7 @@ if(is_remote_ref OR _need_touch_stamp_file)
     endif()
     string(LENGTH "${repo_status}" need_stash)
 
-    # If not in clean state, stash changes in order to be able to be able to
-    # perform git pull --rebase
+    # If not in clean state, stash changes in order to be able to perform git pull --rebase
     if(need_stash)
       message(STATUS "Need rebuild ${PACKAGE_NAME}: the source tree has been editted manually!")
       set(_need_touch_stamp_file TRUE)  # Once editted, we don't know if more changes were made (without calculating a hash of the whole source tree anyway).
