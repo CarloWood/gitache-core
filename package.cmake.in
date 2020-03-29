@@ -3,7 +3,7 @@ ExternalProject_Add(
   PREFIX @gitache_package_PREFIX@
   INSTALL_DIR @gitache_package_INSTALL_DIR@
   CMAKE_ARGS @gitache_package_CMAKE_ARGS@
-  UPDATE_COMMAND $(CMAKE_COMMAND) -E touch /opt/gitache/libcwd_r/src/gitache_package_libcwd_r-stamp/gitache_package_libcwd_r-update
+  UPDATE_COMMAND $(CMAKE_COMMAND) -E touch @gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-update
   @external_project_arguments@
 )
 
@@ -44,7 +44,7 @@ ExternalProject_Add_Step(
 # Make sure the unlock stamp file exists.
 file(TOUCH "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-unlock")
 
-gitache_create_step(custom "@gitache_package@" SILENT)
+#gitache_create_step(custom "@gitache_package@" SILENT)
 
 if (NOT "@GIT_TAG@" STREQUAL "")
   # Update support for git.
@@ -71,7 +71,7 @@ if (NOT "@GIT_TAG@" STREQUAL "")
     gitache_package_@gitache_package@ always_update
     COMMENT ""
     DEPENDS "@gitache_package_PREFIX@/gitache-gitupdate"
-    DEPENDS "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/step_libcwd_r-custom"
+#    DEPENDS "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/step_@gitache_package@-custom"
     ALWAYS 1
   )
 
