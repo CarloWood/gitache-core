@@ -7,13 +7,6 @@ ExternalProject_Add(
   @external_project_arguments@
 )
 
-# File lock support.
-ExternalProject_Add_Step(
-  gitache_package_@gitache_package@ always_lock
-  COMMENT "Cause the lock step to always run"
-  ALWAYS 1
-)
-
 add_custom_command(
   COMMENT "Locking directory '@gitache_package_PREFIX@' for 'gitache_package_@gitache_package@'"
   OUTPUT "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock_and_always_run"
@@ -22,9 +15,10 @@ add_custom_command(
 )
 set_property(SOURCE "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock_and_always_run" PROPERTY SYMBOLIC 1)
 
+# Link step between lock and mkdir.
 ExternalProject_Add_Step(
   gitache_package_@gitache_package@ lock_mkdir
-  COMMENT "Link step between lock and mkdir"
+  COMMENT ""
   DEPENDS "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-lock_and_always_run"
   DEPENDERS mkdir
 )
@@ -60,13 +54,15 @@ if (NOT "@GIT_TAG@" STREQUAL "")
   # This is only needed for some generators.
   set_property(SOURCE "@gitache_package_PREFIX@/gitache-gitupdate" PROPERTY SYMBOLIC 1)
 
+  # Link step between update and configure.
   ExternalProject_Add_Step(
     gitache_package_@gitache_package@ update_configure
-    COMMENT "Link step between update and configure"
+    COMMENT ""
     DEPENDS "@gitache_package_PREFIX@/src/gitache_package_@gitache_package@-stamp/gitache_package_@gitache_package@-gitupdate"
     DEPENDERS configure
   )
 
+  # Add the custom command for gitache-gitupdate into the build chain.
   ExternalProject_Add_Step(
     gitache_package_@gitache_package@ always_update
     COMMENT ""
