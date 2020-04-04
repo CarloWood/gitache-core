@@ -87,7 +87,13 @@ endif ()
 
 # Now, with ${GITACHE_CORE_SOURCE_DIR} process locked, start the real thing.
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}")
+set(ERROR_MESSAGE False)
 include(main)
 
 # We're finished with gitache-core.
 unlock_core_directory()
+
+if(ERROR_MESSAGE)
+  # This happens when ERROR_MESSAGE was set in package.cmake.
+  message(FATAL_ERROR ${ERROR_MESSAGE})
+endif()
