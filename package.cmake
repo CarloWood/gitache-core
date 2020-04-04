@@ -71,8 +71,29 @@ else()
           _result_error
       )
       if(_result_error) # A cmake script always returns just 0 (success) or 1 (failure).
-        set(ERROR_MESSAGE "Failed to config/build/install gitache package \"${gitache_package_NAME}\".")
+        set(ERROR_MESSAGE "Failed to config/build/install cmake package \"${gitache_package_NAME}\".")
       endif()
+    elseif(EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/Makefile.am AND
+           EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/configure.ac)
+      Dout("Attempting to configure/build/install \"${gitache_package_NAME}\" as autotools project; running:")
+      # Start a separate process to configure, make and install this autotools package.
+      execute_process(
+        COMMAND
+          ${CMAKE_COMMAND} ${gitache_log_level}
+            -DGITACHE_CORE_SOURCE_DIR=${GITACHE_CORE_SOURCE_DIR}
+            -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
+            -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
+            -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
+            -P "${CMAKE_CURRENT_LIST_DIR}/configure_make_install_autotools_project.cmake"
+        COMMAND_ECHO ${_where}
+        RESULT_VARIABLE
+          _result_error
+      )
+      if(_result_error)
+        set(ERROR_MESSAGE "Failed to configure/make/install autotools package \"${gitache_package_NAME}\".")
+      endif()
+    else()
+      set(ERROR_MESSAGE "Don't know how to build gitache package \"${gitache_package_NAME}\".")
     endif()
   endif()
 
