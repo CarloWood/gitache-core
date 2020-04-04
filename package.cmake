@@ -49,7 +49,7 @@ else()
 
     # Show the COMMAND if log-level is DEBUG.
     set(_where NONE)
-    if(${CMAKE_MESSAGE_LOG_LEVEL} STREQUAL "DEBUG")
+    if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL} AND "${CMAKE_MESSAGE_LOG_LEVEL}" STREQUAL "DEBUG")
       set(_where "STDOUT")
     endif()
 
