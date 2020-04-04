@@ -110,4 +110,11 @@ foreach (gitache_package ${GITACHE_PACKAGES})
   set(${gitache_package}_ROOT "${gitache_package_INSTALL_PREFIX}")
   Dout("${gitache_package}: ${gitache_package}_ROOT = \"${${gitache_package}_ROOT}\".")
 
+  # Remove possible old entries from the cache.
+  if(DEFINED CACHE{${gitache_package}_DIR} AND NOT ${${gitache_package}_DIR} STREQUAL "${${gitache_package}_ROOT}/lib/cmake/${gitache_package}")
+    message(NOTICE ">> ${_red}Removing old cache value ${gitache_package}_DIR (\"${${gitache_package}_DIR}\")!${_reset}")
+    unset(${gitache_package}_DIR CACHE)
+    unset(${gitache_package}_VERSION CACHE)
+  endif()
+
 endforeach ()
