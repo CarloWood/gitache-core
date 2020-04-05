@@ -12,6 +12,7 @@
 # gitache_log_level                     - An optional -DCMAKE_MESSAGE_LOG_LEVEL=* argument for a cmake child process.
 # gitache_where                         - NONE or STDOUT, depending on log-level.
 # GITACHE_CORE_SOURCE_DIR               - The directory containing gitache-core.
+# gitache_package_HASH_CONTENT          - The string over which the hash is calculated (this is written to the DONE file).
 
 # This is an output variable.
 set(ERROR_MESSAGE False)
@@ -98,7 +99,7 @@ else()
   if(NOT ERROR_MESSAGE)
     # The above only has to be done once.
     Dout("Creating ${_done_file}")
-    file(WRITE ${_done_file} ${gitache_package_LOCK_ID})
+    file(WRITE ${_done_file} "${gitache_package_HASH_CONTENT} / ${gitache_package_LOCK_ID}")
   endif()
 
   set(FETCHCONTENT_QUIET ON)

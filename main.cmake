@@ -60,9 +60,11 @@ foreach (gitache_package ${GITACHE_PACKAGES})
   # Generate an external project.
   #set(_output_file "${_package_directory}/${gitache_package}.cmake")
   # Calculate a hash that determines everything that might have an influence on the build result.
-  string(SHA256 ${gitache_package}_config_hash "${package_independent_seed} ${arguments_to_FetchContent_Declare} ${cmake_arguments}")
+  set(gitache_package_HASH_CONTENT "${package_independent_seed} ${arguments_to_FetchContent_Declare} ${cmake_arguments}")
+  string(SHA256 ${gitache_package}_config_hash ${gitache_package_HASH_CONTENT})
 
   Dout("${gitache_package}_config_hash = \"${${gitache_package}_config_hash}\"")
+  Dout("${gitache_package}: package_independent_seed = \"${package_independent_seed}\".")
   Dout("${gitache_package}: arguments_to_FetchContent_Declare = \"${arguments_to_FetchContent_Declare}\".")
   Dout("${gitache_package}: cmake_arguments = \"${cmake_arguments}\".")
 
