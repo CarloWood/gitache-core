@@ -127,8 +127,10 @@ if (NOT head_sha1 STREQUAL _commit_sha1)
   # This file was changed. Reload it!
   unlock_core_directory()
   return()
-else ()
+elseif (_commit_sha1 STREQUAL GITACHE_CORE_SHA1)
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
+else ()
+  message(STATUS "Gitache-core is already at \"${GITACHE_CORE_SHA1}\" (${_commit_sha1}).")
 endif ()
 
 # Now, with ${GITACHE_CORE_SOURCE_DIR} process locked, start the real thing.
