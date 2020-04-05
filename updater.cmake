@@ -10,6 +10,7 @@
 #
 # Output:
 #    CMAKE_MODULE_PATH                  This file prepends the necessary module load paths.
+#    git_where                          Depending on CMAKE_MESSAGE_LOG_LEVEL, set to either NONE or STDOUT.
 #    git_executable                     Set to the absolute path to the git executable.
 #    gitache_need_include               If GITACHE_CORE_SHA1 wasn't checked out yet, then
 #                                       if gitache_core_is_local is FALSE, this file will
