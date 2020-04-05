@@ -63,6 +63,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
   execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/tags/${GITACHE_CORE_SHA1}
     RESULT_VARIABLE _result_error
     OUTPUT_VARIABLE _commit_sha1
+    OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_QUIET
   )
   if (_result_error)
@@ -70,6 +71,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
     execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/heads/${GITACHE_CORE_SHA1}
       RESULT_VARIABLE _result_error
       OUTPUT_VARIABLE _commit_sha1
+      OUTPUT_STRIP_TRAILING_WHITESPACE
       ERROR_QUIET
     )
   endif ()
@@ -79,7 +81,7 @@ if (NOT _commit_sha1)
   execute_process(COMMAND ${git_executable} rev-parse --verify "${GITACHE_CORE_SHA1}^{commit}"
     RESULT_VARIABLE _result_error
     OUTPUT_VARIABLE _commit_sha1
-    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if (_result_error)
     message(FATAL_ERROR "The environment variable GITACHE_CORE_SHA1 is set to \"${GITACHE_CORE_SHA1}\", which does not exist in the gitache-core repository.")
