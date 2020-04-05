@@ -6,15 +6,6 @@ STAMP_FILE = \"${STAMP_FILE}\"; \
 PACKAGE_NAME = \"${PACKAGE_NAME}\"; \
 PWD = $ENV{PWD}.")
 
-set(commit_sha1)
-if (GIT_TAG MATCHES
-    "^[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
-[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$")
-  set(commit_sha1 ${GIT_TAG})
-endif ()
-
 execute_process(
   COMMAND "${GIT_EXE}" rev-list --max-count=1 HEAD
   RESULT_VARIABLE error_code

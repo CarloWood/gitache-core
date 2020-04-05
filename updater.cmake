@@ -42,9 +42,53 @@ execute_process(COMMAND ${git_executable} rev-parse HEAD
   OUTPUT_VARIABLE head_sha1
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
+# In case the passed "GITACHE_CORE_SHA1" isn't a SHA1, try to do something sane.
+set(_fetch_done false)
+set(_commit_sha1)
+if (NOT GITACHE_CORE_SHA1 MATCHES
+    "^[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
+[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
+[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
+[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$")
+  # Fetch upstream.
+  execute_process(COMMAND ${git_executable} fetch --tags
+    WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
+    RESULT_VARIABLE _result_error
+  )
+  if (NOT _result_error)
+    set(_fetch_done true)
+  endif ()
+  # Is it a tag?
+  execute_process(COMMAND ${git_executable} show-ref --verify refs/tags/${GITACHE_CORE_SHA1}
+    RESULT_VARIABLE _result_error
+    OUTPUT_VARIABLE _commit_sha1
+    ERROR_QUIET
+  )
+  if (_result_error)
+    # Is it a branch?
+    execute_process(COMMAND ${git_executable} show-ref --verify refs/heads/${GITACHE_CORE_SHA1}
+      RESULT_VARIABLE _result_error
+      OUTPUT_VARIABLE _commit_sha1
+      ERROR_QUIET
+    )
+  endif ()
+endif ()
+if (NOT _commit_sha1)
+  # Is it anything that refers to an existing commit?
+  execute_process(COMMAND ${git_executable} rev-parse --verify "${GITACHE_CORE_SHA1}^{commit}"
+    RESULT_VARIABLE _result_error
+    OUTPUT_VARIABLE _commit_sha1
+    ERROR_QUIET
+  )
+  if (_result_error)
+    message(FATAL_ERROR "The environment variable GITACHE_CORE_SHA1 is set to \"${GITACHE_CORE_SHA1}\", which does not exist in the gitache-core repository.")
+  endif ()
+endif ()
+
 # If the right SHA1 is not already checked out,
-if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
-  Dout("head_sha1 = \"${head_sha1}\", GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\".")
+if (NOT head_sha1 STREQUAL _commit_sha1)
+  Dout("head_sha1 = \"${head_sha1}\" != _commit_sha1 = \"${_commit_sha1}\" (= GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\").")
   if (gitache_core_is_local)
     if (GITACHE_CORE_SHA1 STREQUAL "")
       set(_fatal_message "Local ${PROJECT_NAME} detected.")
@@ -61,7 +105,7 @@ if (NOT head_sha1 STREQUAL GITACHE_CORE_SHA1)
     RESULT_VARIABLE _result_error
     ERROR_QUIET
   )
-  if (NOT _result_error EQUAL 0)
+  if (_result_error AND NOT _fetch_done)
     # That SHA1 is not known yet. Fetch it from upstream.
     execute_process(COMMAND ${git_executable} fetch
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
