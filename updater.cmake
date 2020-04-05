@@ -131,7 +131,7 @@ if (NOT head_sha1 STREQUAL _commit_sha1)
   endif ()
   set(gitache_need_include TRUE)
   # Now checkout the needed SHA1.
-  execute_process(COMMAND ${git_executable} checkout ${GITACHE_CORE_SHA1}
+  execute_process(COMMAND ${git_executable} checkout ${_commit_sha1}
     COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
@@ -139,7 +139,7 @@ if (NOT head_sha1 STREQUAL _commit_sha1)
     ERROR_QUIET
   )
   if (_result_error)
-    message(FATAL_ERROR " Failed to checkout ${GITACHE_CORE_SHA1} of gitache-core!")
+    message(FATAL_ERROR " Failed to checkout ${_commit_sha1} of gitache-core!")
   endif ()
   # This file was changed. Reload it!
   unlock_core_directory()
