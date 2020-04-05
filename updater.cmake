@@ -69,7 +69,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
   )
   if (_result_error)
     # Is it a branch?
-    execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/heads/${GITACHE_CORE_SHA1}
+    execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/remotes/origin/${GITACHE_CORE_SHA1}
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
       RESULT_VARIABLE _result_error
       OUTPUT_VARIABLE _commit_sha1
