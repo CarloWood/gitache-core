@@ -17,6 +17,10 @@ include(ProcessorCount)
 #include(${CMAKE_SOURCE_DIR}/../cwm4/cmake/dump_cmake_variables.cmake)
 #dump_cmake_variables(.* RelWith)
 
+string(ASCII 27 _escape)
+set(_bold_cyan "${_escape}[1;36m")
+set(_reset "${_escape}[m")
+
 # Process log-level, again.
 set(_gitache_log_level)
 set(_where NONE)
@@ -35,7 +39,7 @@ if(_cpus EQUAL 0)
 endif()
 
 # Configure step.
-message("Running configure step for '${PACKAGE_NAME}'.")
+message("${_bold_cyan}Running configure step for '${PACKAGE_NAME}'.${_reset}")
 separate_arguments(_cmake_args UNIX_COMMAND ${CMAKE_ARGS})
 execute_process(
   COMMAND
@@ -53,7 +57,7 @@ if(_exit_code)
 endif()
 
 # Build step.
-message("Running build step for '${PACKAGE_NAME}'.")
+message("${_bold_cyan}Running build step for '${PACKAGE_NAME}'.${_reset}")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}
@@ -69,7 +73,7 @@ if(_exit_code)
 endif()
 
 # Install step.
-message("Running install step for '${PACKAGE_NAME}'.")
+message("${_bold_cyan}Running install step for '${PACKAGE_NAME}'.${_reset}")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}

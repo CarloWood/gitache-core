@@ -14,6 +14,10 @@ include(ProcessorCount)
 #include(${CMAKE_SOURCE_DIR}/../cwm4/cmake/dump_cmake_variables.cmake)
 #dump_cmake_variables(.* RelWith)
 
+string(ASCII 27 _escape)
+set(_bold_cyan "${_escape}[1;36m")
+set(_reset "${_escape}[m")
+
 # Process log-level, again.
 set(_where NONE)
 if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
@@ -30,7 +34,7 @@ if(_cpus EQUAL 0)
 endif()
 
 # Bootstrap step.
-message("Running bootstrap step for '${PACKAGE_NAME}'.")
+message("${_bold_cyan}Running bootstrap step for '${PACKAGE_NAME}'.${_reset}")
 execute_process(
   COMMAND
     autoreconf -if
@@ -44,7 +48,7 @@ if(_exit_code)
 endif()
 
 # Configure step.
-message("Running configure step for '${PACKAGE_NAME}'.")
+message("${_bold_cyan}Running configure step for '${PACKAGE_NAME}'.${_reset}")
 execute_process(
   COMMAND
     ${SOURCE_DIR}/configure --prefix=${INSTALL_PREFIX}
@@ -58,7 +62,7 @@ if(_exit_code)
 endif()
 
 # Build step.
-message("Running build step for '${PACKAGE_NAME}'.")
+message("${_bold_cyan}Running build step for '${PACKAGE_NAME}'.${_reset}")
 execute_process(
   COMMAND
     make -j ${_cpus}
@@ -72,7 +76,7 @@ if(_exit_code)
 endif()
 
 # Install step.
-message("Running install step for '${PACKAGE_NAME}'.")
+message("${_bold_cyan}Running install step for '${PACKAGE_NAME}'.${_reset}")
 execute_process(
   COMMAND
     make install
