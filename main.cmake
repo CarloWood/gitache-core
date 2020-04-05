@@ -94,7 +94,6 @@ foreach (gitache_package ${GITACHE_PACKAGES})
       "-DSTAMP_FILE='${_lock_stamp_file}' "
       "-P ${GITACHE_CORE_SOURCE_DIR}/package-lock.cmake")
   set(gitache_package_unlock_COMMAND "${GITACHE_CORE_SOURCE_DIR}/unlock.sh ${gitache_package_ROOT} \"${gitache_package_LOCK_ID}\"")
-  #  configure_file("${CMAKE_CURRENT_LIST_DIR}/package.cmake.in" ${_output_file} @ONLY)
   file(MAKE_DIRECTORY ${gitache_package_ROOT})
   lock_directory(${gitache_package_ROOT})
   include("${CMAKE_CURRENT_LIST_DIR}/package.cmake")
