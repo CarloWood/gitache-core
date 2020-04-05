@@ -1,5 +1,6 @@
 # The following variables need to be defined before including this file:
 #
+# gitache_package                       - The short name of the package.
 # gitache_package_NAME                  - The name of the package as used by FetchContent.
 # gitache_package_ROOT                  - The '_deps' base directory that FetchContent should use.
 # gitache_package_CMAKE_CONFIG          - The build config (for multi-target generators).
@@ -56,7 +57,7 @@ else()
           ${CMAKE_COMMAND} ${gitache_log_level}
             -DCMAKE_ARGS=${gitache_package_CMAKE_ARGS}
             -DCMAKE_CONFIG=${gitache_package_CMAKE_CONFIG}
-            -DGITACHE_PACKAGE_NAME=${gitache_package_NAME}
+            -DPACKAGE_NAME=${gitache_package}
             -DGITACHE_CORE_SOURCE_DIR=${GITACHE_CORE_SOURCE_DIR}
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
@@ -76,7 +77,7 @@ else()
       execute_process(
         COMMAND
           ${CMAKE_COMMAND} ${gitache_log_level}
-            -DGITACHE_PACKAGE_NAME=${gitache_package_NAME}
+            -DPACKAGE_NAME=${gitache_package}
             -DGITACHE_CORE_SOURCE_DIR=${GITACHE_CORE_SOURCE_DIR}
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}

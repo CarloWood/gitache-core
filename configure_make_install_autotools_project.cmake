@@ -5,7 +5,7 @@
 # INSTALL_PREFIX                - The prefix used for installation of the package.
 # CMAKE_MESSAGE_LOG_LEVEL       - An optional log-level for the cmake child processes.
 # GITACHE_CORE_SOURCE_DIR       - The directory containing gitache-core.
-# GITACHE_PACKAGE_NAME          - Used for message output (name of the gitache package).
+# PACKAGE_NAME                  - Used for message output (short name of the gitache package).
 
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
 include(debug_support)  # For Dout.
@@ -30,7 +30,7 @@ if(_cpus EQUAL 0)
 endif()
 
 # Bootstrap step.
-message("gitache: running bootstrap step for ${GITACHE_PACKAGE_NAME}...")
+message("Running bootstrap step for '${PACKAGE_NAME}'.")
 execute_process(
   COMMAND
     autoreconf -if
@@ -44,7 +44,7 @@ if(_exit_code)
 endif()
 
 # Configure step.
-message("gitache: running configure step for ${GITACHE_PACKAGE_NAME}...")
+message("Running configure step for '${PACKAGE_NAME}'.")
 execute_process(
   COMMAND
     ${SOURCE_DIR}/configure --prefix=${INSTALL_PREFIX}
@@ -58,7 +58,7 @@ if(_exit_code)
 endif()
 
 # Build step.
-message("gitache: running build step for ${GITACHE_PACKAGE_NAME}...")
+message("Running build step for '${PACKAGE_NAME}'.")
 execute_process(
   COMMAND
     make -j ${_cpus}
@@ -72,7 +72,7 @@ if(_exit_code)
 endif()
 
 # Install step.
-message("gitache: running install step for ${GITACHE_PACKAGE_NAME}...")
+message("Running install step for '${PACKAGE_NAME}'.")
 execute_process(
   COMMAND
     make install
