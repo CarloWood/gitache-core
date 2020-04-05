@@ -33,11 +33,18 @@ include(debug_support)
 gitache_get_git_executable(git_executable)
 Dout("git_executable = \"${git_executable}\".")
 
+# Show COMMANDs if log-level is DEBUG.
+set(gitache_where NONE)
+if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL} AND "${CMAKE_MESSAGE_LOG_LEVEL}" STREQUAL "DEBUG")
+  set(gitache_where "STDOUT")
+endif()
+
 # Stop other processes from changing the SHA1.
 lock_core_directory()
 
 # Get the SHA1 that is checked out right now.
 execute_process(COMMAND ${git_executable} rev-parse HEAD
+  COMMAND_ECHO ${gitache_where}
   WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
   OUTPUT_VARIABLE head_sha1
   OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -53,6 +60,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
 [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$")
   # Fetch upstream.
   execute_process(COMMAND ${git_executable} fetch --tags
+    COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
   )
@@ -61,6 +69,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
   endif ()
   # Is it a tag?
   execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/tags/${GITACHE_CORE_SHA1}
+    COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
     OUTPUT_VARIABLE _commit_sha1
@@ -70,6 +79,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
   if (_result_error)
     # Is it a branch?
     execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/remotes/origin/${GITACHE_CORE_SHA1}
+      COMMAND_ECHO ${gitache_where}
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
       RESULT_VARIABLE _result_error
       OUTPUT_VARIABLE _commit_sha1
@@ -81,6 +91,7 @@ endif ()
 if (NOT _commit_sha1)
   # Is it anything that refers to an existing commit?
   execute_process(COMMAND ${git_executable} rev-parse --verify "${GITACHE_CORE_SHA1}^{commit}"
+    COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
     OUTPUT_VARIABLE _commit_sha1
@@ -106,6 +117,7 @@ if (NOT head_sha1 STREQUAL _commit_sha1)
   endif ()
   # check if the SHA1 is in the local repository.
   execute_process(COMMAND ${git_executable} cat-file -e "${GITACHE_CORE_SHA1}^{commit}"
+    COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
     ERROR_QUIET
@@ -113,12 +125,14 @@ if (NOT head_sha1 STREQUAL _commit_sha1)
   if (_result_error AND NOT _fetch_done)
     # That SHA1 is not known yet. Fetch it from upstream.
     execute_process(COMMAND ${git_executable} fetch
+      COMMAND_ECHO ${gitache_where}
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     )
   endif ()
   set(gitache_need_include TRUE)
   # Now checkout the needed SHA1.
   execute_process(COMMAND ${git_executable} checkout ${GITACHE_CORE_SHA1}
+    COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
     OUTPUT_QUIET
@@ -139,7 +153,7 @@ endif ()
 # Now, with ${GITACHE_CORE_SOURCE_DIR} process locked, start the real thing.
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}")
 set(ERROR_MESSAGE False)
-include(main)
+include(main)   # Also uses gitache_where.
 
 # We're finished with gitache-core.
 unlock_core_directory()

@@ -9,6 +9,7 @@
 # arguments_to_FetchContent_Declare     - Space separated list of arguments that need to be passed to FetchContent_Declare.
 # gitache_package_LOCK_ID               - An identifying string for this install (this is written to the DONE file).
 # gitache_log_level                     - An optional -DCMAKE_MESSAGE_LOG_LEVEL=* argument for a cmake child process.
+# gitache_where                         - NONE or STDOUT, depending on log-level.
 # GITACHE_CORE_SOURCE_DIR               - The directory containing gitache-core.
 
 # This is an output variable.
@@ -47,12 +48,6 @@ else()
     # Populate the source and binary directories of this package.
     FetchContent_Populate(${gitache_package_NAME})
 
-    # Show the COMMAND if log-level is DEBUG.
-    set(_where NONE)
-    if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL} AND "${CMAKE_MESSAGE_LOG_LEVEL}" STREQUAL "DEBUG")
-      set(_where "STDOUT")
-    endif()
-
     if(EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/CMakeLists.txt)
       Dout("Attempting to configure/build/install \"${gitache_package_NAME}\" as cmake project; running:")
       # Start a separate process to configure, build and install this cmake package.
@@ -66,7 +61,7 @@ else()
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
             -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_build_install_cmake_project.cmake"
-        COMMAND_ECHO ${_where}
+        COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE
           _result_error
       )
@@ -85,7 +80,7 @@ else()
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
             -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_make_install_autotools_project.cmake"
-        COMMAND_ECHO ${_where}
+        COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE
           _result_error
       )
