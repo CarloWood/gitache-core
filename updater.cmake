@@ -61,6 +61,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
   endif ()
   # Is it a tag?
   execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/tags/${GITACHE_CORE_SHA1}
+    WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
     OUTPUT_VARIABLE _commit_sha1
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -69,6 +70,7 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
   if (_result_error)
     # Is it a branch?
     execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/heads/${GITACHE_CORE_SHA1}
+      WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
       RESULT_VARIABLE _result_error
       OUTPUT_VARIABLE _commit_sha1
       OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -79,6 +81,7 @@ endif ()
 if (NOT _commit_sha1)
   # Is it anything that refers to an existing commit?
   execute_process(COMMAND ${git_executable} rev-parse --verify "${GITACHE_CORE_SHA1}^{commit}"
+    WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _result_error
     OUTPUT_VARIABLE _commit_sha1
     OUTPUT_STRIP_TRAILING_WHITESPACE
