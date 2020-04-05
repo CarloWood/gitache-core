@@ -99,7 +99,7 @@ else()
   if(NOT ERROR_MESSAGE)
     # The above only has to be done once.
     Dout("Creating ${_done_file}")
-    file(WRITE ${_done_file} "${gitache_package_HASH_CONTENT} - ${gitache_package_LOCK_ID}")
+    file(WRITE ${_done_file} "${gitache_package_HASH_CONTENT} - ${gitache_package_LOCK_ID}\n")
   endif()
 
   set(FETCHCONTENT_QUIET ON)
