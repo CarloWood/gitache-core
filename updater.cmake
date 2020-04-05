@@ -54,7 +54,7 @@ execute_process(COMMAND ${git_executable} rev-parse HEAD
 # In case the passed "GITACHE_CORE_SHA1" isn't a SHA1, try to do something sane.
 set(_fetch_done false)
 set(_commit_sha1)
-if (NOT GITACHE_CORE_SHA1 MATCHES
+if(NOT GITACHE_CORE_SHA1 MATCHES
     "^[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
 [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
 [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]\
@@ -63,93 +63,93 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
   execute_process(COMMAND ${git_executable} fetch --tags
     COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
-    RESULT_VARIABLE _result_error
+    RESULT_VARIABLE _exit_code
   )
-  if (NOT _result_error)
+  if(NOT _exit_code)
     set(_fetch_done true)
-  endif ()
+  endif()
   # Is it a tag?
   execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/tags/${GITACHE_CORE_SHA1}
     COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
-    RESULT_VARIABLE _result_error
+    RESULT_VARIABLE _exit_code
     OUTPUT_VARIABLE _commit_sha1
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_QUIET
   )
-  if (_result_error)
+  if(_exit_code)
     # Is it a branch?
     execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/remotes/origin/${GITACHE_CORE_SHA1}
       COMMAND_ECHO ${gitache_where}
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
-      RESULT_VARIABLE _result_error
+      RESULT_VARIABLE _exit_code
       OUTPUT_VARIABLE _commit_sha1
       OUTPUT_STRIP_TRAILING_WHITESPACE
       ERROR_QUIET
     )
-  endif ()
-endif ()
-if (NOT _commit_sha1)
+  endif()
+endif()
+if(NOT _commit_sha1)
   # Is it anything that refers to an existing commit?
   execute_process(COMMAND ${git_executable} rev-parse --verify "${GITACHE_CORE_SHA1}^{commit}"
     COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
-    RESULT_VARIABLE _result_error
+    RESULT_VARIABLE _exit_code
     OUTPUT_VARIABLE _commit_sha1
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
-  if (_result_error)
+  if(_exit_code)
     message(FATAL_ERROR "The environment variable GITACHE_CORE_SHA1 is set to \"${GITACHE_CORE_SHA1}\", which does not exist in the gitache-core repository.")
-  endif ()
-endif ()
+  endif()
+endif()
 
 # If the right SHA1 is not already checked out,
-if (NOT head_sha1 STREQUAL _commit_sha1)
+if(NOT head_sha1 STREQUAL _commit_sha1)
   Dout("head_sha1 = \"${head_sha1}\" != _commit_sha1 = \"${_commit_sha1}\" (= GITACHE_CORE_SHA1 = \"${GITACHE_CORE_SHA1}\").")
-  if (gitache_core_is_local)
-    if (GITACHE_CORE_SHA1 STREQUAL "")
+  if(gitache_core_is_local)
+    if(GITACHE_CORE_SHA1 STREQUAL "")
       set(_fatal_message "Local ${PROJECT_NAME} detected.")
-    else ()
+    else()
       set(_fatal_message "The local submodule has checked out ${head_sha1}, but ${GITACHE_CORE_SHA1} is requested.")
-    endif ()
+    endif()
     message(FATAL_ERROR
       " ${_fatal_message} Please set the environment variable GITACHE_CORE_SHA1 to the sha1 that is checked out before calling cmake:\n"
       " \n     export GITACHE_CORE_SHA1=$(git -C ${GITACHE_CORE_SOURCE_DIR} rev-parse HEAD)\n")
-  endif ()
+  endif()
   # check if the SHA1 is in the local repository.
   execute_process(COMMAND ${git_executable} cat-file -e "${GITACHE_CORE_SHA1}^{commit}"
     COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
-    RESULT_VARIABLE _result_error
+    RESULT_VARIABLE _exit_code
     ERROR_QUIET
   )
-  if (_result_error AND NOT _fetch_done)
+  if(_exit_code AND NOT _fetch_done)
     # That SHA1 is not known yet. Fetch it from upstream.
     execute_process(COMMAND ${git_executable} fetch
       COMMAND_ECHO ${gitache_where}
       WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     )
-  endif ()
+  endif()
   set(gitache_need_include TRUE)
   # Now checkout the needed SHA1.
   execute_process(COMMAND ${git_executable} checkout ${_commit_sha1}
     COMMAND_ECHO ${gitache_where}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
-    RESULT_VARIABLE _result_error
+    RESULT_VARIABLE _exit_code
     OUTPUT_QUIET
     ERROR_QUIET
   )
-  if (_result_error)
+  if(_exit_code)
     message(FATAL_ERROR " Failed to checkout ${_commit_sha1} of gitache-core!")
-  endif ()
+  endif()
   # This file was changed. Reload it!
   unlock_core_directory()
   return()
-elseif (_commit_sha1 STREQUAL GITACHE_CORE_SHA1)
+elseif(_commit_sha1 STREQUAL GITACHE_CORE_SHA1)
   message(STATUS "Gitache-core is already at ${GITACHE_CORE_SHA1}.")
-else ()
+else()
   message(STATUS "Gitache-core is already at \"${GITACHE_CORE_SHA1}\" (${_commit_sha1}).")
-endif ()
+endif()
 
 # Now, with ${GITACHE_CORE_SOURCE_DIR} process locked, start the real thing.
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}")

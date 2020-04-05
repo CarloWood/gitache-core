@@ -8,6 +8,7 @@
 # INSTALL_PREFIX                - The prefix used for installation of the package.
 # CMAKE_MESSAGE_LOG_LEVEL       - An optional log-level for the cmake child processes.
 # GITACHE_CORE_SOURCE_DIR       - The directory containing gitache-core.
+# GITACHE_PACKAGE_NAME          - Used for message output (name of the gitache package).
 
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
 include(debug_support)  # For Dout.
@@ -19,13 +20,13 @@ include(ProcessorCount)
 # Process log-level, again.
 set(_gitache_log_level)
 set(_where NONE)
-if (DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
+if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
   message(STATUS "CMAKE_MESSAGE_LOG_LEVEL = \"${CMAKE_MESSAGE_LOG_LEVEL}\".")
   set(_gitache_log_level "-DCMAKE_MESSAGE_LOG_LEVEL=${CMAKE_MESSAGE_LOG_LEVEL}")
   if(${CMAKE_MESSAGE_LOG_LEVEL} STREQUAL "DEBUG")
     set(_where "STDOUT")
   endif()
-endif ()
+endif()
 
 # Determine the number of cores we have, again.
 ProcessorCount(_cpus)
@@ -34,6 +35,7 @@ if(_cpus EQUAL 0)
 endif()
 
 # Configure step.
+message("gitache: running configure step for ${GITACHE_PACKAGE_NAME}...")
 separate_arguments(_cmake_args UNIX_COMMAND ${CMAKE_ARGS})
 execute_process(
   COMMAND
@@ -43,9 +45,15 @@ execute_process(
       ${_gitache_log_level}
       ${_cmake_args}
   COMMAND_ECHO ${_where}
+  RESULT_VARIABLE _exit_code
 )
 
+if(_exit_code)
+  message(FATAL_ERROR "Failed to configure cmake project at \"${SOURCE_DIR}\".")
+endif()
+
 # Build step.
+message("gitache: running build step for ${GITACHE_PACKAGE_NAME}...")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}
@@ -53,9 +61,15 @@ execute_process(
     --config ${CMAKE_CONFIG}
     --parallel ${_cpus}
   COMMAND_ECHO ${_where}
+  RESULT_VARIABLE _exit_code
 )
 
+if(_exit_code)
+  message(FATAL_ERROR "Failed to build cmake project at \"${BINARY_DIR}\".")
+endif()
+
 # Install step.
+message("gitache: running install step for ${GITACHE_PACKAGE_NAME}...")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}
@@ -63,4 +77,9 @@ execute_process(
       --config ${CMAKE_CONFIG}
       --prefix ${INSTALL_PREFIX}
   COMMAND_ECHO ${_where}
+  RESULT_VARIABLE _exit_code
 )
+
+if(_exit_code)
+  message(FATAL_ERROR "Failed to install cmake project at \"${BINARY_DIR}\".")
+endif()

@@ -56,6 +56,7 @@ else()
           ${CMAKE_COMMAND} ${gitache_log_level}
             -DCMAKE_ARGS=${gitache_package_CMAKE_ARGS}
             -DCMAKE_CONFIG=${gitache_package_CMAKE_CONFIG}
+            -DGITACHE_PACKAGE_NAME=${gitache_package_NAME}
             -DGITACHE_CORE_SOURCE_DIR=${GITACHE_CORE_SOURCE_DIR}
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
@@ -63,9 +64,9 @@ else()
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_build_install_cmake_project.cmake"
         COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE
-          _result_error
+          _exit_code
       )
-      if(_result_error) # A cmake script always returns just 0 (success) or 1 (failure).
+      if(_exit_code) # A cmake script always returns either 0 (success) or 1 (failure).
         set(ERROR_MESSAGE "Failed to config/build/install cmake package \"${gitache_package_NAME}\".")
       endif()
     elseif(EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/Makefile.am AND
@@ -75,6 +76,7 @@ else()
       execute_process(
         COMMAND
           ${CMAKE_COMMAND} ${gitache_log_level}
+            -DGITACHE_PACKAGE_NAME=${gitache_package_NAME}
             -DGITACHE_CORE_SOURCE_DIR=${GITACHE_CORE_SOURCE_DIR}
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
@@ -82,9 +84,9 @@ else()
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_make_install_autotools_project.cmake"
         COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE
-          _result_error
+          _exit_code
       )
-      if(_result_error)
+      if(_exit_code)
         set(ERROR_MESSAGE "Failed to configure/make/install autotools package \"${gitache_package_NAME}\".")
       endif()
     else()
@@ -92,10 +94,10 @@ else()
     endif()
   endif()
 
-  if (NOT ERROR_MESSAGE)
+  if(NOT ERROR_MESSAGE)
     # The above only has to be done once.
     Dout("Creating ${_done_file}")
-    file(WRITE ${_done_file} ${gitache_package_LOCK_ID})
+#    file(WRITE ${_done_file} ${gitache_package_LOCK_ID})
   endif()
 
   set(FETCHCONTENT_QUIET ON)

@@ -8,11 +8,11 @@ PWD = $ENV{PWD}.")
 
 execute_process(
   COMMAND "${GIT_EXE}" rev-list --max-count=1 HEAD
-  RESULT_VARIABLE error_code
+  RESULT_VARIABLE _exit_code
   OUTPUT_VARIABLE head_sha
   OUTPUT_STRIP_TRAILING_WHITESPACE
   )
-if(error_code)
+if(_exit_code)
   message(FATAL_ERROR "${PACKAGE_NAME}: failed to get the hash for HEAD.")
 endif()
 
@@ -43,13 +43,13 @@ endif()
 # yet).
 execute_process(
   COMMAND "${GIT_EXE}" rev-list --max-count=1 ${GIT_TAG}
-  RESULT_VARIABLE error_code
+  RESULT_VARIABLE _exit_code
   OUTPUT_VARIABLE tag_sha
   OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
 # Is the hash checkout out that we want?
-if(error_code OR NOT tag_sha STREQUAL head_sha)
+if(_exit_code OR NOT tag_sha STREQUAL head_sha)
   message(STATUS "Need rebuild ${PACKAGE_NAME}: requested commit is not checked out.")
   set(_need_touch_stamp_file TRUE)
 else()
@@ -58,9 +58,9 @@ endif()
 if(is_remote_ref OR _need_touch_stamp_file)
   execute_process(
     COMMAND "${GIT_EXE}" fetch
-    RESULT_VARIABLE error_code
+    RESULT_VARIABLE _exit_code
     )
-  if(error_code)
+  if(_exit_code)
     message(FATAL_ERROR "${PACKAGE_NAME}: failed to fetch repository '$ENV{PWD}'.")
   endif()
 
@@ -68,10 +68,10 @@ if(is_remote_ref OR _need_touch_stamp_file)
     # Check if stash is needed
     execute_process(
       COMMAND "${GIT_EXE}" status --porcelain
-      RESULT_VARIABLE error_code
+      RESULT_VARIABLE _exit_code
       OUTPUT_VARIABLE repo_status
       )
-    if(error_code)
+    if(_exit_code)
       message(FATAL_ERROR "${PACKAGE_NAME}: failed to get the status.")
     endif()
     string(LENGTH "${repo_status}" need_stash)
@@ -82,9 +82,9 @@ if(is_remote_ref OR _need_touch_stamp_file)
       set(_need_touch_stamp_file TRUE)  # Once editted, we don't know if more changes were made (without calculating a hash of the whole source tree anyway).
       execute_process(
         COMMAND "${GIT_EXE}" stash save --all;--quiet
-        RESULT_VARIABLE error_code
+        RESULT_VARIABLE _exit_code
         )
-      if(error_code)
+      if(_exit_code)
         message(FATAL_ERROR "${PACKAGE_NAME}: failed to stash changes.")
       endif()
     endif()
@@ -92,9 +92,9 @@ if(is_remote_ref OR _need_touch_stamp_file)
     # Pull changes from the remote branch
     execute_process(
       COMMAND "${GIT_EXE}" rebase ${git_remote}/${git_tag}
-      RESULT_VARIABLE error_code
+      RESULT_VARIABLE _exit_code
       )
-    if(error_code)
+    if(_exit_code)
       # Rebase failed: Restore previous state.
       execute_process(
         COMMAND "${GIT_EXE}" rebase --abort
@@ -109,11 +109,11 @@ if(is_remote_ref OR _need_touch_stamp_file)
 
     execute_process(
       COMMAND "${GIT_EXE}" rev-list --max-count=1 HEAD
-      RESULT_VARIABLE error_code
+      RESULT_VARIABLE _exit_code
       OUTPUT_VARIABLE new_head_sha
       OUTPUT_STRIP_TRAILING_WHITESPACE
       )
-    if(error_code)
+    if(_exit_code)
       message(FATAL_ERROR "${PACKAGE_NAME}: failed to get the hash for HEAD after rebase.")
     endif()
     if(NOT new_head_sha STREQUAL head_sha)
@@ -124,19 +124,19 @@ if(is_remote_ref OR _need_touch_stamp_file)
     if(need_stash)
       execute_process(
         COMMAND "${GIT_EXE}" stash pop --index --quiet
-        RESULT_VARIABLE error_code
+        RESULT_VARIABLE _exit_code
         )
-      if(error_code)
+      if(_exit_code)
         # Stash pop --index failed: Try again dropping the index
         execute_process(
           COMMAND "${GIT_EXE}" reset --hard --quiet
-          RESULT_VARIABLE error_code
+          RESULT_VARIABLE _exit_code
           )
         execute_process(
           COMMAND "${GIT_EXE}" stash pop --quiet
-          RESULT_VARIABLE error_code
+          RESULT_VARIABLE _exit_code
           )
-        if(error_code)
+        if(_exit_code)
           # Stash pop failed: Restore previous state.
           execute_process(
             COMMAND "${GIT_EXE}" reset --hard --quiet ${head_sha}
@@ -151,9 +151,9 @@ if(is_remote_ref OR _need_touch_stamp_file)
   else()
     execute_process(
       COMMAND "${GIT_EXE}" checkout ${GIT_TAG}
-      RESULT_VARIABLE error_code
+      RESULT_VARIABLE _exit_code
       )
-    if(error_code)
+    if(_exit_code)
       message(FATAL_ERROR "${PACKAGE_NAME}: failed to checkout tag: '${GIT_TAG}'.")
     endif()
   endif()
@@ -162,10 +162,10 @@ if(is_remote_ref OR _need_touch_stamp_file)
   if(init_submodules)
     execute_process(
       COMMAND "${GIT_EXE}" submodule update --recursive --init 
-      RESULT_VARIABLE error_code
+      RESULT_VARIABLE _exit_code
       )
   endif()
-  if(error_code)
+  if(_exit_code)
     message(FATAL_ERROR "${PACKAGE_NAME}: failed to update submodules in: '$ENV{PWD}'.")
   endif()
 endif()

@@ -23,9 +23,9 @@ function(lock_directory package_root)
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _exit_code
   )
-  if (NOT ${_exit_code} EQUAL 0)
+  if(_exit_code)
     message(FATAL_ERROR "Could not lock directory.")
-  endif ()
+  endif()
 endfunction()
 
 function(unlock_directory package_root)
@@ -34,25 +34,25 @@ function(unlock_directory package_root)
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
     RESULT_VARIABLE _exit_code
   )
-  if (NOT ${_exit_code} EQUAL 0)
+  if(_exit_code)
     message(FATAL_ERROR "Could not unlock directory.")
-  endif ()
+  endif()
 endfunction()
 
 message(STATUS "CMAKE_MESSAGE_LOG_LEVEL = \"${CMAKE_MESSAGE_LOG_LEVEL}\".")
 set(gitache_log_level)
-if (DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
+if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
   set(gitache_log_level "-DCMAKE_MESSAGE_LOG_LEVEL=${CMAKE_MESSAGE_LOG_LEVEL}")
-endif ()
+endif()
 
 set(package_independent_seed "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 foreach (gitache_package ${GITACHE_PACKAGES})
-  if (NOT EXISTS "${GITACHE_CONFIGS_DIR}/${gitache_package}.cmake")
+  if(NOT EXISTS "${GITACHE_CONFIGS_DIR}/${gitache_package}.cmake")
     message(FATAL_ERROR
       " No configuration file found for package ${gitache_package}.\n"
       " Please add a file \"${GITACHE_CONFIGS_DIR}/${gitache_package}.cmake\"."
     )
-  endif ()
+  endif()
   # Load the user specified configuration for this package.
   set(GIT_TAG)
   set(gitache_package_CMAKE_CONFIG "Release")
