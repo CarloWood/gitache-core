@@ -60,14 +60,14 @@ if (NOT GITACHE_CORE_SHA1 MATCHES
     set(_fetch_done true)
   endif ()
   # Is it a tag?
-  execute_process(COMMAND ${git_executable} show-ref --verify refs/tags/${GITACHE_CORE_SHA1}
+  execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/tags/${GITACHE_CORE_SHA1}
     RESULT_VARIABLE _result_error
     OUTPUT_VARIABLE _commit_sha1
     ERROR_QUIET
   )
   if (_result_error)
     # Is it a branch?
-    execute_process(COMMAND ${git_executable} show-ref --verify refs/heads/${GITACHE_CORE_SHA1}
+    execute_process(COMMAND ${git_executable} show-ref --hash --verify refs/heads/${GITACHE_CORE_SHA1}
       RESULT_VARIABLE _result_error
       OUTPUT_VARIABLE _commit_sha1
       ERROR_QUIET
