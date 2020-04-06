@@ -9,18 +9,19 @@
 # CMAKE_MESSAGE_LOG_LEVEL       - An optional log-level for the cmake child processes.
 # GITACHE_CORE_SOURCE_DIR       - The directory containing gitache-core.
 # PACKAGE_NAME                  - Used for message output (short name of the gitache package).
-# HASH_CONTENT                  - The string that was used to calculate the SHA256 that is part of the install prefix.
+# HASH_CONTENT_ES               - The string that was used to calculate the SHA256 that is part of the install prefix.
+#                                 But with semicolons replaces with <-:-:->.
 
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
 include(debug_support)  # For Dout.
+include(color_vars)
 include(ProcessorCount)
 
 #include(${CMAKE_SOURCE_DIR}/../cwm4/cmake/dump_cmake_variables.cmake)
 #dump_cmake_variables(.* RelWith)
 
-string(ASCII 27 _escape)
-set(_bold_cyan "${_escape}[1;36m")
-set(_reset "${_escape}[m")
+# Convert HASH_CONTENT back.
+string(REPLACE "<-:-:->" ";" HASH_CONTENT "${HASH_CONTENT_ES}")
 
 # Process log-level, again.
 set(_gitache_log_level)
@@ -40,7 +41,7 @@ if(_cpus EQUAL 0)
 endif()
 
 # Configure step.
-message("${_bold_cyan}Running configure step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${_reset}")
+message("${BoldCyan}Running configure step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${ColourReset}")
 separate_arguments(_cmake_args UNIX_COMMAND ${CMAKE_ARGS})
 execute_process(
   COMMAND
@@ -58,7 +59,7 @@ if(_exit_code)
 endif()
 
 # Build step.
-message("${_bold_cyan}Running build step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${_reset}")
+message("${BoldCyan}Running build step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${ColourReset}")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}
@@ -74,7 +75,7 @@ if(_exit_code)
 endif()
 
 # Install step.
-message("${_bold_cyan}Running install step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${_reset}")
+message("${BoldCyan}Running install step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${ColourReset}")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}

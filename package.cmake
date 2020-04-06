@@ -12,7 +12,8 @@
 # gitache_log_level                     - An optional -DCMAKE_MESSAGE_LOG_LEVEL=* argument for a cmake child process.
 # gitache_where                         - NONE or STDOUT, depending on log-level.
 # GITACHE_CORE_SOURCE_DIR               - The directory containing gitache-core.
-# gitache_package_HASH_CONTENT          - The string over which the hash is calculated (this is written to the DONE file).
+# gitache_package_HASH_CONTENT          - The string over which the hash is calculated (this is written to the DONE file). Contains semi-colons!
+# gitache_package_BOOTSTRAP_COMMAND     - A user defined command to run before configuration of a the package.
 
 # This is an output variable.
 set(ERROR_MESSAGE False)
@@ -49,7 +50,30 @@ else()
   if(NOT ${gitache_package_NAME_lc}_POPULATED)
     # Populate the source and binary directories of this package.
     FetchContent_Populate(${gitache_package_NAME})
+    set(FETCHCONTENT_QUIET ON)
 
+    if(NOT "${gitache_package_BOOTSTRAP_COMMAND}" STREQUAL "")
+      # Bootstrap step.
+      message("${BoldCyan}Running bootstrap step for '${gitache_package}' [${gitache_package_HASH_CONTENT}].${ColourReset}")
+      message(STATUS "gitache_package_BOOTSTRAP_COMMAND = \"${gitache_package_BOOTSTRAP_COMMAND}\".")
+      set(_exit_code 2)
+      execute_process(
+        COMMAND
+          ${gitache_package_BOOTSTRAP_COMMAND}
+        COMMAND_ECHO ${gitache_where}
+        WORKING_DIRECTORY ${${gitache_package_NAME_lc}_SOURCE_DIR}
+        RESULT_VARIABLE _exit_code
+      )
+      if(_exit_code)
+        if(_exit_code EQUAL 2)
+          set(ERROR_MESSAGE "Fatal error: execute_process() did not run. See CMake Error above.")
+        else()
+          set(ERROR_MESSAGE "Failed to bootstrap autotools project at \"${${gitache_package_NAME_lc}_SOURCE_DIR}\".")
+        endif()
+        return()
+      endif()
+    endif()
+    string(REPLACE ";" "<-:-:->" _hash_content_encoded_semicolon "${gitache_package_HASH_CONTENT}")
     if(EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/CMakeLists.txt)
       Dout("Attempting to configure/build/install \"${gitache_package_NAME}\" as cmake project; running:")
       # Start a separate process to configure, build and install this cmake package.
@@ -63,7 +87,7 @@ else()
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
             -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
-            -DHASH_CONTENT=${gitache_package_HASH_CONTENT}
+            -DHASH_CONTENT_ES=${_hash_content_encoded_semicolon}
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_build_install_cmake_project.cmake"
         COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE
@@ -71,6 +95,7 @@ else()
       )
       if(_exit_code) # A cmake script always returns either 0 (success) or 1 (failure).
         set(ERROR_MESSAGE "Failed to config/build/install cmake package \"${gitache_package_NAME}\".")
+        return()
       endif()
     elseif(EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/Makefile.am AND
            EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/configure.ac)
@@ -84,7 +109,7 @@ else()
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
             -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
-            -DHASH_CONTENT=${gitache_package_HASH_CONTENT}
+            -DHASH_CONTENT_ES=${_hash_content_encoded_semicolon}
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_make_install_autotools_project.cmake"
         COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE
@@ -92,19 +117,19 @@ else()
       )
       if(_exit_code)
         set(ERROR_MESSAGE "Failed to configure/make/install autotools package \"${gitache_package_NAME}\".")
+        return()
       endif()
     else()
       set(ERROR_MESSAGE "Don't know how to build gitache package \"${gitache_package_NAME}\".")
+      return()
     endif()
+  else()
+    set(FETCHCONTENT_QUIET ON)
   endif()
 
-  if(NOT ERROR_MESSAGE)
-    # The above only has to be done once.
-    Dout("Creating ${_done_file}")
-    file(WRITE ${_done_file} "${gitache_package_HASH_CONTENT} - ${gitache_package_LOCK_ID}\n")
-  endif()
-
-  set(FETCHCONTENT_QUIET ON)
+  # The above only has to be done once.
+  Dout("Creating ${_done_file}")
+  file(WRITE ${_done_file} "${gitache_package_HASH_CONTENT} - ${gitache_package_LOCK_ID}\n")
 endif()
 
 # Restore default values.

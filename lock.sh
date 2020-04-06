@@ -39,7 +39,7 @@ echo "-- Locking directory \"$1\"."
     if [ -e "$1/gitache.lock" ]; then
       KEY=$(cat "$1/gitache.lock")
       test "$KEY" != "$2" || fatal_error "Calling lock recursively ($2)?!"
-      echo "** Can't lock \"$1\" with key '$2' because \"$1/gitache.lock\" already exists ($KEY). Sleeping 1 second..."
+      echo "** Can't lock \"$1\" with key '$2' because \"$1/gitache.lock\" already exists [$KEY]. Sleeping 1 second..."
       flock -u 9
       sleep 1
       continue

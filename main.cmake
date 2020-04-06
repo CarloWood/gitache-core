@@ -4,9 +4,10 @@ message(STATUS "Reading package configurations from \"${GITACHE_CONFIGS_DIR}/\".
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cwm4/cmake")
 
+include(color_vars)
 include(gitache_config)
 include(ExternalProject)
-include(gitache_create_step)
+#include(gitache_create_step)
 
 # Create necessary directories.
 set(_package_directory "${CMAKE_CURRENT_BINARY_DIR}/packages")
@@ -60,17 +61,19 @@ foreach (gitache_package ${GITACHE_PACKAGES})
   # Generate an external project.
   #set(_output_file "${_package_directory}/${gitache_package}.cmake")
   # Calculate a hash that determines everything that might have an influence on the build result.
-  set(gitache_package_HASH_CONTENT "${package_independent_seed} ${arguments_to_FetchContent_Declare} ${cmake_arguments}")
-  string(SHA256 ${gitache_package}_config_hash ${gitache_package_HASH_CONTENT})
+  set(gitache_package_HASH_CONTENT "${package_independent_seed}|${arguments_to_FetchContent_Declare}|${bootstrap_command}|${cmake_arguments}")
+  string(SHA256 ${gitache_package}_config_hash "${gitache_package_HASH_CONTENT}")
 
   Dout("${gitache_package}_config_hash = \"${${gitache_package}_config_hash}\"")
   Dout("${gitache_package}: package_independent_seed = \"${package_independent_seed}\".")
   Dout("${gitache_package}: arguments_to_FetchContent_Declare = \"${arguments_to_FetchContent_Declare}\".")
+  Dout("${gitache_package}: bootstrap_command = \"${bootstrap_command}\".")
   Dout("${gitache_package}: cmake_arguments = \"${cmake_arguments}\".")
 
   set(gitache_package_ROOT "${GITACHE_ROOT}/${gitache_package}")
   set(gitache_package_NAME "gitache_package_${gitache_package}")
   set(gitache_package_INSTALL_PREFIX "${gitache_package_ROOT}/${${gitache_package}_config_hash}")
+  set(gitache_package_BOOTSTRAP_COMMAND ${bootstrap_command})
   set(gitache_package_CMAKE_ARGS "${cmake_arguments} -DCMAKE_INSTALL_PREFIX=${gitache_package_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${gitache_package_CMAKE_CONFIG}")
 
   set(_gitupdate_stamp_file "${gitache_package_ROOT}/src/gitache_package_${gitache_package}-stamp/gitache_package_${gitache_package}-gitupdate")
@@ -113,7 +116,7 @@ foreach (gitache_package ${GITACHE_PACKAGES})
 
   # Remove possible old entries from the cache.
   if(DEFINED CACHE{${gitache_package}_DIR} AND NOT ${${gitache_package}_DIR} STREQUAL "${${gitache_package}_ROOT}/lib/cmake/${gitache_package}")
-    message(NOTICE ">> ${_red}Removing old cache value ${gitache_package}_DIR (\"${${gitache_package}_DIR}\")!${_reset}")
+    message(NOTICE ">> ${Red}Removing old cache value ${gitache_package}_DIR (\"${${gitache_package}_DIR}\")!${ColourReset}")
     unset(${gitache_package}_DIR CACHE)
     unset(${gitache_package}_VERSION CACHE)
   endif()
