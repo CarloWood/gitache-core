@@ -7,7 +7,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cwm4/cmake")
 include(color_vars)
 include(gitache_config)
 include(ExternalProject)
-#include(gitache_create_step)
 
 # Create necessary directories.
 set(_package_directory "${CMAKE_CURRENT_BINARY_DIR}/packages")
