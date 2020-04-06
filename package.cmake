@@ -63,6 +63,7 @@ else()
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
             -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
+            -DHASH_CONTENT=${gitache_package_HASH_CONTENT}
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_build_install_cmake_project.cmake"
         COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE
@@ -83,6 +84,7 @@ else()
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
             -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
+            -DHASH_CONTENT=${gitache_package_HASH_CONTENT}
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_make_install_autotools_project.cmake"
         COMMAND_ECHO ${gitache_where}
         RESULT_VARIABLE

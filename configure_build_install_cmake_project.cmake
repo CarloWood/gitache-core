@@ -9,6 +9,7 @@
 # CMAKE_MESSAGE_LOG_LEVEL       - An optional log-level for the cmake child processes.
 # GITACHE_CORE_SOURCE_DIR       - The directory containing gitache-core.
 # PACKAGE_NAME                  - Used for message output (short name of the gitache package).
+# HASH_CONTENT                  - The string that was used to calculate the SHA256 that is part of the install prefix.
 
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
 include(debug_support)  # For Dout.
@@ -39,7 +40,7 @@ if(_cpus EQUAL 0)
 endif()
 
 # Configure step.
-message("${_bold_cyan}Running configure step for '${PACKAGE_NAME}'.${_reset}")
+message("${_bold_cyan}Running configure step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${_reset}")
 separate_arguments(_cmake_args UNIX_COMMAND ${CMAKE_ARGS})
 execute_process(
   COMMAND
@@ -57,7 +58,7 @@ if(_exit_code)
 endif()
 
 # Build step.
-message("${_bold_cyan}Running build step for '${PACKAGE_NAME}'.${_reset}")
+message("${_bold_cyan}Running build step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${_reset}")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}
@@ -73,7 +74,7 @@ if(_exit_code)
 endif()
 
 # Install step.
-message("${_bold_cyan}Running install step for '${PACKAGE_NAME}'.${_reset}")
+message("${_bold_cyan}Running install step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${_reset}")
 execute_process(
   COMMAND
     ${CMAKE_COMMAND}
