@@ -1,5 +1,31 @@
 ## Gitache package configuration files.
 
+Each package listed in `GITACHE_PACKAGES` must come with a config
+file in `cmake/gitache-configs` in the root of the main project.
+
+For example if `myproject/CMakeLists.txt` contains the line
+
+    set(GITACHE_PACKAGES foobar blah)
+
+then the files `myproject/cmake/gitache-configs/foobar.cmake` and
+`myproject/cmake/gitache-configs/blah.cmake` must exist.
+
+Their contents should be, for example,
+
+    gitache_config(
+      GIT_REPOSITORY
+        "https://github.com/CarloWood/libcwd.git"
+      GIT_TAG
+        "master"
+      CMAKE_ARGS
+        "-DEnableLibcwdAlloc:BOOL=OFF -DEnableLibcwdLocation:BOOL=ON"
+    )
+
+Again, you are encouraged to use a SHA1 for the `GIT_TAG` for reasons
+of reproduciblity and stability, but a tag or branch work too. A branch
+will result in a `git fetch` every time the project is (re)configured;
+a tag or sha1 only if that tag or sha1 doesn't exist (yet).
+
 Currently supported are:
 
     GIT_REPOSITORY     - Git URL to clone / fetch.
@@ -7,6 +33,9 @@ Currently supported are:
     BOOTSTRAP_COMMAND  - Command to run before configuration.
     CMAKE_ARGS         - Arguments to pass to cmake (cmake projects only).
     CONFIGURE_ARGS     - Arguments to pass to configure (autotools projects only).
+
+Both, `CMAKE_ARGS` and `CONFIGURE_ARGS` are intended to pass package configurations
+only. Do not attempt to pass an install prefix.
 
 See https://github.com/CarloWood/ai-statefultask-testsuite/tree/master/cmake/gitache-configs
 for example configurations.
