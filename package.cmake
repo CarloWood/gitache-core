@@ -6,6 +6,8 @@
 # gitache_package_CMAKE_CONFIG          - The build config (for multi-target generators).
 # gitache_package_CMAKE_ARGS            - If the package is a cmake project, arguments that should be passed to cmake during configuration.
 #                                         This already includes -DCMAKE_BUILD_TYPE=${gitache_package_CMAKE_CONFIG}, for single-target.
+# gitache_package_CONFIGURE_ARGS        - If the package is an autotools project, arguments that should be passed to configure.
+#                                         This already includes --prefix=${gitache_package_INSTALL_PREFIX}.
 # gitache_package_INSTALL_PREFIX        - The prefix used for installation of the package.
 # arguments_to_FetchContent_Declare     - Space separated list of arguments that need to be passed to FetchContent_Declare.
 # gitache_package_LOCK_ID               - An identifying string for this install (this is written to the DONE file).
@@ -101,14 +103,15 @@ else()
            EXISTS ${${gitache_package_NAME_lc}_SOURCE_DIR}/configure.ac)
       Dout("Attempting to configure/build/install \"${gitache_package_NAME}\" as autotools project; running:")
       # Start a separate process to configure, make and install this autotools package.
+      string(REPLACE ";" "\\;" escaped_CONFIGURE_ARGS "${gitache_package_CONFIGURE_ARGS}")
       execute_process(
         COMMAND
           ${CMAKE_COMMAND} ${gitache_log_level}
+            -DCONFIGURE_ARGS=${escaped_CONFIGURE_ARGS}
             -DPACKAGE_NAME=${gitache_package}
             -DGITACHE_CORE_SOURCE_DIR=${GITACHE_CORE_SOURCE_DIR}
             -DSOURCE_DIR=${${gitache_package_NAME_lc}_SOURCE_DIR}
             -DBINARY_DIR=${${gitache_package_NAME_lc}_BINARY_DIR}
-            -DINSTALL_PREFIX=${gitache_package_INSTALL_PREFIX}
             -DHASH_CONTENT_ES=${_hash_content_encoded_semicolon}
             -P "${CMAKE_CURRENT_LIST_DIR}/configure_make_install_autotools_project.cmake"
         COMMAND_ECHO ${gitache_where}

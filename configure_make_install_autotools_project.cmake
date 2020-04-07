@@ -2,12 +2,13 @@
 #
 # SOURCE_DIR                    - The source directory of the package.
 # BINARY_DIR                    - The binary directory of the package.
-# INSTALL_PREFIX                - The prefix used for installation of the package.
 # CMAKE_MESSAGE_LOG_LEVEL       - An optional log-level for the cmake child processes.
 # GITACHE_CORE_SOURCE_DIR       - The directory containing gitache-core.
 # PACKAGE_NAME                  - Used for message output (short name of the gitache package).
 # HASH_CONTENT_ES               - The string that was used to calculate the SHA256 that is part of the install prefix.
 #                                 But with semicolons replaces with <-:-:->.
+# CONFIGURE_ARGS                - User defined arguments that should be passed to configure.
+#                                 This already includes the --prefix=${INSTALL_PREFIX}.
 
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
 include(color_vars)
@@ -39,7 +40,7 @@ endif()
 message("${BoldCyan}Running configure step for '${PACKAGE_NAME}' [${HASH_CONTENT}].${ColourReset}")
 execute_process(
   COMMAND
-    ${SOURCE_DIR}/configure --prefix=${INSTALL_PREFIX}
+    ${SOURCE_DIR}/configure ${CONFIGURE_ARGS}
   COMMAND_ECHO ${_where}
   WORKING_DIRECTORY ${BINARY_DIR}
   RESULT_VARIABLE _exit_code
