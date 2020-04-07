@@ -40,6 +40,9 @@ only. Do not attempt to pass an install prefix.
 See https://github.com/CarloWood/ai-statefultask-testsuite/tree/master/cmake/gitache-configs
 for example configurations.
 
+Also, see https://github.com/CarloWood/ai-statefultask-testsuite/blob/master/CMakeLists.txt
+for an example of a project that uses gitache.
+
 ## Gitache developers
 
 If you want to experiment with making changes to gitache itself,
