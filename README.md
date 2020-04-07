@@ -1,6 +1,12 @@
 ## Gitache package configuration files.
 
-To be done...
+Currently supported are:
+
+    GIT_REPOSITORY     - Git URL to clone / fetch.
+    GIT_TAG            - The thing to checkout with git.
+    BOOTSTRAP_COMMAND  - Command to run before configuration.
+    CMAKE_ARGS         - Arguments to pass to cmake (cmake projects only).
+    CONFIGURE_ARGS     - Arguments to pass to configure (autotools projects only).
 
 See https://github.com/CarloWood/ai-statefultask-testsuite/tree/master/cmake/gitache-configs
 for example configurations.
