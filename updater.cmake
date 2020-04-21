@@ -22,6 +22,8 @@
 # If GITACHE_CORE_SHA1 is already checked out, then GITACHE_CORE_SOURCE_DIR
 # is locked and control passed to main.cmake.
 
+message(DEBUG "DEBUG: Entering `${CMAKE_CURRENT_LIST_FILE}`")
+
 # Make sure that GITACHE_CORE_SHA1 is checked out.
 # This is done by executing git commands directly; so find git.
 
