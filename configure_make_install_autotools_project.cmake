@@ -6,7 +6,7 @@
 # GITACHE_CORE_SOURCE_DIR       - The directory containing gitache-core.
 # PACKAGE_NAME                  - Used for message output (short name of the gitache package).
 # HASH_CONTENT_ES               - The string that was used to calculate the SHA256 that is part of the install prefix.
-#                                 But with semicolons replaces with <-:-:->.
+#                                 But with semicolons replaced with <-:-:->.
 # CONFIGURE_ARGS                - User defined arguments that should be passed to configure.
 #                                 This already includes the --prefix=${INSTALL_PREFIX}.
 
