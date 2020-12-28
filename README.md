@@ -23,8 +23,8 @@ Their contents should be, for example,
 
 Again, you are encouraged to use a SHA1 for the `GIT_TAG` for reasons
 of reproduciblity and stability, but a tag or branch work too. A branch
-will result in a `git fetch` every time the project is (re)configured;
-a tag or sha1 only if that tag or sha1 doesn't exist (yet).
+will NOT result in a `git fetch` every time the project is (re)configured
+(see below); a tag or sha1 only if that tag or sha1 doesn't exist (yet).
 
 Currently supported are:
 
@@ -42,6 +42,21 @@ for example configurations.
 
 Also, see https://github.com/CarloWood/ai-statefultask-testsuite/blob/master/CMakeLists.txt
 for an example of a project that uses gitache.
+
+## Using a branch instead of SHA1
+
+In order to 'git update' a `GIT_TAG` branch (like "master" in the exmaple above),
+you need to remove the 'DONE' file from the ROOT of the gitache project
+(the value of the ROOT is printed during configuration when cmake DEBUG
+output is turned on (add `-DCMAKE_MESSAGE_LOG_LEVEL=DEBUG` to cmake when
+configuring));
+
+For example, the above would print something like
+
+    -- DEBUG: libcwd_r: libcwd_r_ROOT = "/opt/gitache/libcwd_r/1289adbf8a106a19b815fdf539814aaf5ffdf1eac652290a38af5677e08f34e8".
+
+then, in order to pull the `master` again, remove the file
+`/opt/gitache/libcwd_r/1289adbf8a106a19b815fdf539814aaf5ffdf1eac652290a38af5677e08f34e8/DONE`.
 
 ## Gitache developers
 
