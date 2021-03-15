@@ -31,7 +31,7 @@ if [ $# -ne 2 -o ! -d "$1" ]; then
   exit 1
 fi
 
-echo "-- Locking directory \"$1\"."
+#echo "-- Locking directory \"$1\"."
 (
   while true; do
     flock 9 || fatal_error "Couldn't lock \"$1/gitache.flock\"!?!" 

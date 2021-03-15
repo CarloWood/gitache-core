@@ -18,6 +18,7 @@ string(RANDOM LENGTH 8 _random_string)
 set(gitache_package_LOCK_ID "${CMAKE_SOURCE_DIR} - configured ${_current_time} - ${_random_string}")
 
 function(lock_directory package_root)
+  message(DEBUG "Locking directory \"${package_root}\".")
   execute_process(
     COMMAND "${GITACHE_CORE_SOURCE_DIR}/lock.sh" ${package_root} ${gitache_package_LOCK_ID}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
@@ -29,6 +30,7 @@ function(lock_directory package_root)
 endfunction()
 
 function(unlock_directory package_root)
+  message(DEBUG "Unlocking directory \"${package_root}\".")
   execute_process(
     COMMAND "${GITACHE_CORE_SOURCE_DIR}/unlock.sh" ${package_root} ${gitache_package_LOCK_ID}
     WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
@@ -39,7 +41,6 @@ function(unlock_directory package_root)
   endif()
 endfunction()
 
-message(STATUS "CMAKE_MESSAGE_LOG_LEVEL = \"${CMAKE_MESSAGE_LOG_LEVEL}\".")
 set(gitache_log_level)
 if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
   set(gitache_log_level "-DCMAKE_MESSAGE_LOG_LEVEL=${CMAKE_MESSAGE_LOG_LEVEL}")

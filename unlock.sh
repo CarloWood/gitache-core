@@ -15,7 +15,7 @@ if [ $# -ne 2 -o ! -d "$1" ]; then
   echo "Usage: $0 <directory> <unique_key>" >&2
   exit 1
 else
-  echo "-- Unlocking directory \"$1\"."
+  #echo "-- Unlocking directory \"$1\"."
   (
   flock 9 || fatal_error "Couldn't lock \"$1/gitache.flock\" ($2)!?!" 
 
