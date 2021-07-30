@@ -45,7 +45,7 @@ for an example of a project that uses gitache.
 
 ## Using a branch instead of SHA1
 
-In order to 'git update' a `GIT_TAG` branch (like "master" in the exmaple above),
+In order to 'git update' a `GIT_TAG` branch (like "master" in the example above),
 you need to remove the 'DONE' file from the ROOT of the gitache project
 (the value of the ROOT is printed during configuration when cmake DEBUG
 output is turned on (add `-DCMAKE_MESSAGE_LOG_LEVEL=DEBUG` to cmake when
