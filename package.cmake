@@ -50,13 +50,13 @@ else()
   string(TOLOWER ${gitache_package_NAME} gitache_package_NAME_lc)
   FetchContent_GetProperties(${gitache_package_NAME})
   if(NOT ${gitache_package_NAME_lc}_POPULATED)
-    # Unset CMAKE_GENERATOR while running FetchContent_Populate, so that it
+    # Unset CMAKE_GENERATOR while running FetchContent_MakeAvailable, so that it
     # uses the (platform) default generator (you can still pass a -G to its
     # CMAKE_ARGS of course.
     set(CMAKE_GENERATOR_STORE ${CMAKE_GENERATOR})
     unset(CMAKE_GENERATOR CACHE)
     # Populate the source and binary directories of this package.
-    FetchContent_Populate(${gitache_package_NAME})
+    FetchContent_MakeAvailable(${gitache_package_NAME})
     set(CMAKE_GENERATOR "${CMAKE_GENERATOR_STORE}" CACHE INTERNAL "The projects generator")
     set(FETCHCONTENT_QUIET ON)
 
