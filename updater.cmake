@@ -92,17 +92,34 @@ if(NOT GITACHE_CORE_SHA1 MATCHES
   endif()
 endif()
 if(NOT _commit_sha1)
-  # Is it anything that refers to an existing commit?
-  execute_process(COMMAND ${git_executable} rev-parse --verify "${GITACHE_CORE_SHA1}^{commit}"
-    COMMAND_ECHO ${gitache_where}
-    WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
-    RESULT_VARIABLE _exit_code
-    OUTPUT_VARIABLE _commit_sha1
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  if(_exit_code)
-    message(FATAL_ERROR "The environment variable GITACHE_CORE_SHA1 is set to \"${GITACHE_CORE_SHA1}\", which does not exist in the gitache-core repository.")
-  endif()
+  set(_fetched FALSE)
+  while (TRUE)
+    # Is it anything that refers to an existing commit?
+    execute_process(COMMAND ${git_executable} rev-parse --verify "${GITACHE_CORE_SHA1}^{commit}"
+      COMMAND_ECHO ${gitache_where}
+      WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
+      RESULT_VARIABLE _exit_code
+      OUTPUT_VARIABLE _commit_sha1
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (NOT _exit_code)
+      break()
+    endif ()
+    if (_fetched)
+      message(FATAL_ERROR "The environment variable GITACHE_CORE_SHA1 is set to \"${GITACHE_CORE_SHA1}\", which does not exist in the gitache-core repository.")
+    endif ()
+    # Fetch once, then loop to retry the rev-parse.
+    execute_process(
+      COMMAND ${git_executable} fetch
+      COMMAND_ECHO ${gitache_where}
+      WORKING_DIRECTORY ${GITACHE_CORE_SOURCE_DIR}
+      RESULT_VARIABLE _fetch_exit
+    )
+    if (_fetch_exit)
+      message(FATAL_ERROR "git fetch failed with exit code ${_fetch_exit}.")
+    endif ()
+    set(_fetched TRUE)
+  endwhile ()
 endif()
 
 # If the right SHA1 is not already checked out,
