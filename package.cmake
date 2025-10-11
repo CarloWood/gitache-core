@@ -39,10 +39,11 @@ if(EXISTS ${_done_file})
 else()
   set(FETCHCONTENT_QUIET OFF)
 
-  Dout("Calling FetchContent_Declare(${gitache_package_NAME} ${arguments_to_FetchContent_Declare})")
+  Dout("Calling FetchContent_Declare(${gitache_package_NAME} SOURCE_SUBDIR \"doesnotexist\" ${arguments_to_FetchContent_Declare})")
   separate_arguments(_args UNIX_COMMAND ${arguments_to_FetchContent_Declare})
   FetchContent_Declare(
     ${gitache_package_NAME}
+    SOURCE_SUBDIR "doesnotexist"
     # E.g. GIT_TAG and GIT_REPOSITORY. See gitache_config.cmake for a full list.
     ${_args}
   )
