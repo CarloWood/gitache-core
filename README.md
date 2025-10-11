@@ -1,4 +1,4 @@
-## Gitache package configuration files.
+## Gitache package configuration files
 
 Each package listed in `GITACHE_PACKAGES` must come with a config
 file in `cmake/gitache-configs` in the root of the main project.
