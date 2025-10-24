@@ -50,6 +50,7 @@ else()
 
   string(TOLOWER ${gitache_package_NAME} gitache_package_NAME_lc)
   FetchContent_GetProperties(${gitache_package_NAME})
+
   if(NOT ${gitache_package_NAME_lc}_POPULATED)
     # Unset CMAKE_GENERATOR while running FetchContent_MakeAvailable, so that it
     # uses the (platform) default generator (you can still pass a -G to its

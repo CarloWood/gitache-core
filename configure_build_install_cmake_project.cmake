@@ -9,7 +9,7 @@
 # CMAKE_MESSAGE_LOG_LEVEL       - An optional log-level for the cmake child processes.
 # GITACHE_CORE_SOURCE_DIR       - The directory containing gitache-core.
 # PACKAGE_NAME                  - Used for message output (short name of the gitache package).
-# HASH_CONTENT_ES               - The string that was used to calculate the SHA256 that is part of the install prefix.
+# HASH_CONTENT_ES               - The (Encoded) String that was used to calculate the SHA256 that is part of the install prefix.
 #                                 But with semicolons replaces with <-:-:->.
 
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
