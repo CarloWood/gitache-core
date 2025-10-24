@@ -57,7 +57,24 @@ else()
     # CMAKE_ARGS of course.
     set(CMAKE_GENERATOR_STORE ${CMAKE_GENERATOR})
     unset(CMAKE_GENERATOR CACHE)
+
+    # FetchContent_MakeAvailable might do nothing even if the source tree is empty,
+    # because "stamp" files have been stored in the build directory of the super project.
+    if(NOT EXISTS "${FETCHCONTENT_BASE_DIR}/${gitache_package_NAME_lc}-src/.git")
+      set(_fc_stamp_dir "${CMAKE_BINARY_DIR}/CMakeFiles/fc-stamp/${gitache_package_NAME_lc}")
+      set(_fc_tmp_dir   "${CMAKE_BINARY_DIR}/CMakeFiles/fc-tmp/${gitache_package_NAME_lc}")
+      if(EXISTS "${_fc_stamp_dir}" OR EXISTS "${_fc_tmp_dir}")
+        message(STATUS "Warning: ${FETCHCONTENT_BASE_DIR}/${gitache_package_NAME_lc}-src/.git does not exist. Removing stamp files.")
+        file(REMOVE "${_fc_stamp_dir}/download.stamp"
+                    "${_fc_stamp_dir}/update.stamp"
+                    "${_fc_stamp_dir}/patch.stamp"
+                    "${_fc_stamp_dir}/gitache_package_versor-gitclone-lastrun.txt")
+        file(REMOVE_RECURSE "${_fc_tmp_dir}")
+      endif()
+    endif()
+
     # Populate the source and binary directories of this package.
+    Dout("Calling FetchContent_MakeAvailable(${gitache_package_NAME})")
     FetchContent_MakeAvailable(${gitache_package_NAME})
     set(CMAKE_GENERATOR "${CMAKE_GENERATOR_STORE}" CACHE INTERNAL "The projects generator")
     set(FETCHCONTENT_QUIET ON)

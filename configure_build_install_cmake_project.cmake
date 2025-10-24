@@ -12,6 +12,19 @@
 # HASH_CONTENT_ES               - The (Encoded) String that was used to calculate the SHA256 that is part of the install prefix.
 #                                 But with semicolons replaces with <-:-:->.
 
+#==============================================================================
+# POLICIES
+#
+if (POLICY CMP0140)
+  # This policy was introduced in cmake 3.25.
+  cmake_policy(SET CMP0140 NEW)
+endif ()
+
+if (NOT DEFINED GITACHE_CORE_SOURCE_DIR OR "${GITACHE_CORE_SOURCE_DIR}" STREQUAL "")
+  # Return a non-zero exit code to the execute_process package.cmake that started this script.
+  message(FATAL_ERROR "gitache-core/configure_build_install_cmake_project.cmake: GITACHE_CORE_SOURCE_DIR is not set!")
+endif ()
+
 list(PREPEND CMAKE_MODULE_PATH "${GITACHE_CORE_SOURCE_DIR}/utils")
 include(debug_support)  # For Dout.
 include(color_vars)
