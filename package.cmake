@@ -74,7 +74,7 @@ else()
         file(REMOVE "${_fc_stamp_dir}/download.stamp"
                     "${_fc_stamp_dir}/update.stamp"
                     "${_fc_stamp_dir}/patch.stamp"
-                    "${_fc_stamp_dir}/gitache_package_versor-gitclone-lastrun.txt")
+                    "${_fc_stamp_dir}/${gitache_package_NAME_lc}-gitclone-lastrun.txt")
         file(REMOVE_RECURSE "${_fc_tmp_dir}")
       endif()
     endif()
