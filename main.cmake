@@ -237,20 +237,7 @@ endfunction()
 
 function(_gitache_require_packages_locked)
 
-  set(options)
-  set(oneValueArgs)
-  set(multiValueArgs CONFIG_DIRS)
-  cmake_parse_arguments(gitache_require "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  foreach(_dir ${gitache_require_CONFIG_DIRS})
-    _gitache_register_config_dir_locked("${_dir}")
-    if (ERROR_MESSAGE)
-      set(ERROR_MESSAGE "${ERROR_MESSAGE}" PARENT_SCOPE)
-      return()
-    endif ()
-  endforeach()
-
-  set(_packages ${gitache_require_UNPARSED_ARGUMENTS})
+  set(_packages ${ARGN})
   if(NOT _packages)
     return()
   endif()
@@ -266,9 +253,7 @@ function(_gitache_require_packages_locked)
   endforeach()
 
   foreach(_package ${_processed_in_call})
-    if(DEFINED ${_package}_ROOT)
-      set(${_package}_ROOT "${${_package}_ROOT}" PARENT_SCOPE)
-    endif()
+    set(${_package}_ROOT "${${_package}_ROOT}" PARENT_SCOPE)
   endforeach()
 endfunction()
 
