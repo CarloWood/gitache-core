@@ -3,6 +3,8 @@
 # GITACHE_PACKAGES                      - Space separated list of packages required by the main project.
 # gitache_where                         - NONE or STDOUT, depending on log-level.
 # GITACHE_CORE_SOURCE_DIR               - The directory containing gitache-core.
+#
+message(DEBUG "DEBUG: Entering `${CMAKE_CURRENT_LIST_FILE}` with GITACHE_PACKAGES = \"${GITACHE_PACKAGES}\".")
 
 # Every package in GITACHE_PACKAGES must have a config file in _gitache_default_config_dir.
 set(_gitache_default_config_dir "${CMAKE_SOURCE_DIR}/cmake/gitache-configs" CACHE PATH "Default directory containing configs for gitache packages.")
@@ -87,6 +89,9 @@ function(_gitache_register_config_dir absolute_dir)
 endfunction()
 
 function(_gitache_register_config_dir_locked dir)
+  if (NOT CORE_DIRECTORY_LOCKED)
+    message(FATAL_ERROR "Calling _gitache_register_config_dir_locked while core directory is not locked.")
+  endif ()
   get_filename_component(_absolute "${dir}" ABSOLUTE)
   if(NOT IS_DIRECTORY "${_absolute}")
     set(ERROR_MESSAGE "${CMAKE_CURRENT_FUNCTION_LIST_FILE}: \"${dir}\" is not a directory." PARENT_SCOPE)
@@ -117,6 +122,9 @@ if(DEFINED CACHE{CMAKE_MESSAGE_LOG_LEVEL})
 endif()
 
 function(_gitache_process_package_locked package)
+  if (NOT CORE_DIRECTORY_LOCKED)
+    message(FATAL_ERROR "Calling _gitache_process_package_locked while core directory is not locked.")
+  endif ()
   if("${package}" STREQUAL "")
     set(ERROR_MESSAGE "${CMAKE_CURRENT_FUNCTION_LIST_FILE}: called with empty package name." PARENT_SCOPE)
     return()
@@ -236,6 +244,9 @@ function(_gitache_process_package_locked package)
 endfunction()
 
 function(_gitache_require_packages_locked)
+  if (NOT CORE_DIRECTORY_LOCKED)
+    message(FATAL_ERROR "Calling _gitache_require_packages_locked while core directory is not locked.")
+  endif ()
 
   set(_packages ${ARGN})
   if(NOT _packages)

@@ -5,6 +5,7 @@
 # of ${GITACHE_CORE_SHA1} is available.
 #
 # Input:
+#    GITACHE_PACKAGES                   Space separated list of packages required by the main project.
 #    gitache_core_is_local              True if this is a local submodule.
 #    GITACHE_CORE_SHA1                  The SHA1 of the required commit of gitache-core.
 #
@@ -22,7 +23,7 @@
 # If GITACHE_CORE_SHA1 is already checked out, then GITACHE_CORE_SOURCE_DIR
 # is locked and control passed to main.cmake.
 
-message(DEBUG "DEBUG: Entering `${CMAKE_CURRENT_LIST_FILE}`")
+message(DEBUG "DEBUG: Entering `${CMAKE_CURRENT_LIST_FILE}` with GITACHE_PACKAGES = \"${GITACHE_PACKAGES}\".")
 
 # Make sure that GITACHE_CORE_SHA1 is checked out.
 # This is done by executing git commands directly; so find git.
@@ -44,6 +45,7 @@ endif()
 
 # Stop other processes from changing the SHA1.
 _gitache_lock_core_directory()
+set(CORE_DIRECTORY_LOCKED True)
 
 while (TRUE) # So we can break out of it after setting ERROR_MESSAGE.
   set(ERROR_MESSAGE False)
@@ -199,8 +201,10 @@ if (NOT ERROR_MESSAGE)
 
 function(gitache_register_config_dir)
   _gitache_lock_core_directory()
+  set(CORE_DIRECTORY_LOCKED True)
   gitache_register_config_dir_locked(${ARGV})
   _gitache_unlock_core_directory()
+  set(CORE_DIRECTORY_LOCKED False)
 
   if (ERROR_MESSAGE)
     message(FATAL_ERROR ${ERROR_MESSAGE})
@@ -220,6 +224,7 @@ function(gitache_require_packages)
   set(_packages ${gitache_require_UNPARSED_ARGUMENTS})
 
   _gitache_lock_core_directory()
+  set(CORE_DIRECTORY_LOCKED True)
 
   foreach(_dir ${gitache_require_CONFIG_DIRS})
     _gitache_register_config_dir_locked("${_dir}")
@@ -234,6 +239,7 @@ function(gitache_require_packages)
   endif ()
 
   _gitache_unlock_core_directory()
+  set(CORE_DIRECTORY_LOCKED False)
 
   if (ERROR_MESSAGE)
     message(FATAL_ERROR ${ERROR_MESSAGE})
@@ -249,6 +255,7 @@ endif (NOT ERROR_MESSAGE)
 
 # We're finished with gitache-core.
 _gitache_unlock_core_directory()
+set(CORE_DIRECTORY_LOCKED False)
 
 if (ERROR_MESSAGE)
   message(FATAL_ERROR ${ERROR_MESSAGE})
