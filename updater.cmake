@@ -52,13 +52,12 @@ while (TRUE) # So we can break out of it after setting ERROR_MESSAGE.
 
   # This might not even be a git repository; in that case there is nothing to update.
   if (NOT EXISTS "${GITACHE_CORE_SOURCE_DIR}/.git")
-    Dout("Not a git repository: skipping the update of gitache-core.")
-  else (NOT EXISTS "${GITACHE_CORE_SOURCE_DIR}/.git")
     if (NOT gitache_core_is_local)
       set(ERROR_MESSAGE "Can't find a .git directory in ${GITACHE_CORE_SOURCE_DIR}.")
       break()
     endif ()
-
+    Dout("Not a git repository: skipping the update of gitache-core.")
+  else (NOT EXISTS "${GITACHE_CORE_SOURCE_DIR}/.git")
     # Get the SHA1 that is checked out right now.
     execute_process(COMMAND ${git_executable} rev-parse HEAD
       COMMAND_ECHO ${gitache_where}
