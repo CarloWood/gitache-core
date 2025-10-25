@@ -97,7 +97,8 @@ function(gitache_register_config_dir dir)
 endfunction()
 
 function(_gitache_locate_package_config package out_var)
-  _gitache_register_config_dir(${CMAKE_CURRENT_SOURCE_DIR}/cmake/gitache-configs)
+  # If a CMakeLists.txt file calls `gitache_require_packages` directly, CMAKE_CURRENT_LIST_DIR will be the directory where this CMakeLists.txt resides.
+  _gitache_register_config_dir(${CMAKE_CURRENT_LIST_DIR}/cmake/gitache-configs)
   get_property(_dirs GLOBAL PROPERTY GITACHE_CONFIG_DIRS)
   foreach(_dir ${_dirs})
     set(_candidate "${_dir}/${package}.cmake")
@@ -233,6 +234,11 @@ function(gitache_process_package package)
 endfunction()
 
 function(gitache_require_packages)
+  # This function can be called from a submodules CMakeLists.txt;
+  # we have to load all required global properties that were set by the super project!
+  get_property(_core_dir GLOBAL PROPERTY GITACHE_CORE_SOURCE_DIR)
+  set(GITACHE_CORE_SOURCE_DIR ${_core_dir})
+
   set(options)
   set(oneValueArgs)
   set(multiValueArgs CONFIG_DIRS)

@@ -61,7 +61,9 @@ gitache_require_packages(
 )
 ```
 
-The `CONFIG_DIRS` is optional: gitache looks by default in `${CMAKE_CURRENT_SOURCE_DIR}/cmake/gitache-configs`.
+The `CONFIG_DIRS` is optional: gitache looks by default in `${CMAKE_CURRENT_SOURCE_DIR}/cmake/gitache-configs`,
+but if specified then it must be the last argument; the package names must given first.
+The paths specified are relative to the directory of the `CMakeLists.txt` that is doing the call.
 
 A submodule can also first register the directory that contains its gitache configuration
 files and then request the packages it needs:

@@ -17,6 +17,12 @@
 # gitache_package_HASH_CONTENT          - The string over which the hash is calculated (this is written to the DONE file). Contains semi-colons!
 # gitache_package_BOOTSTRAP_COMMAND     - A user defined command to run before configuration of a the package.
 
+if (NOT DEFINED GITACHE_CORE_SOURCE_DIR OR "${GITACHE_CORE_SOURCE_DIR}" STREQUAL "")
+  #  message(FATAL_ERROR "gitache-core/package.cmake: GITACHE_CORE_SOURCE_DIR is not set!")
+  set(ERROR_MESSAGE "gitache-core/package.cmake:22: GITACHE_CORE_SOURCE_DIR is not set!")
+  return()
+endif ()
+
 # This is an output variable.
 set(ERROR_MESSAGE False)
 
